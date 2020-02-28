@@ -42,7 +42,14 @@
         reader.readAsDataURL(file_img.files[0]);
     }
 
+    function updateNumber(event){
+        let ranger = $(this);
+        let ranger_label = $('label[for="range"]');
+        ranger_label.text(`Range ${ranger.val()}`);
+    }
+
     $("button[name='button']").click(readText);
     $("input[name='submit']").click(loadFile);
+    $("input[type='range']").change(updateNumber);
 
  });
