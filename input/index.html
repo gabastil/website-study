@@ -1,0 +1,133 @@
+<!--
+    filename: index.html
+    author: glenn abastillas
+    created: 2020-02-27
+    description: a study of the various forms of input, buttons, and form
+    HTML elements
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Input Study</title>
+    <link rel='stylesheet' type='text/css' href='css/index.css' />
+    <script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type='text/javascript' src='js/index.js'></script>
+</head>
+<body>
+    <div class='section input'>
+        <h1>Input and Text Areas</h1>
+        <div class='section stack'>
+            <h3>Text and Text Area</h3>
+            <label for="text">Text Input</label>
+            <input type="text" name="text" placeholder="Enter Text"></input>
+
+            <label for="textarea">Text Area Input</label>
+            <textarea type="textarea" name="textarea" placeholder="Enter Text">
+            </textarea>
+
+            <label for="email">Email</label>
+            <input type="email" name="email" placeholder="Enter Email">
+            </input>
+
+            <label for="tel">Phone Number</label>
+            <input type="tel" name="tel" placeholder="Enter Phone Number">
+            </input>
+
+            <label for="password">Password</label>
+            <input type="password" name="password" placeholder="Enter Password">
+            </input>
+
+            <label for="search">Search</label>
+            <input type="search" name="search" placeholder="Enter Search" autocomplete="on">
+            </input>
+
+            <label for="url">URL</label>
+            <input type="url" name="url" placeholder="Enter URL">
+            </input>
+        </div>
+        <div class='section stack'>
+            <h3>Dropdowns and Lists</h3>
+            <label for="dropdown">Dropdown Box</label>
+            <select>
+                <option>One</option>
+                <option>Two</option>
+            </select>
+
+            <label for="dropdown-empty">Dropdown Box (Empty)</label>
+            <select></select>
+
+            <label for='range'>Range</label>
+            <input type="range" name="range">
+
+        </div>
+        <div class='section stack output'>
+            <h3>Output of Above Fields</h3>
+            <div id='output' class='output'></div>
+        </div>
+    </div>
+
+    <div class='section button'>
+        <h1>Buttons, Radios, Checkboxes</h1>
+        <div class='section stack'>
+            <h3>Buttons and Clickables</h3>
+            <label for="button">Button</label>
+            <button name="button">Click Me To Submit Text</button>
+
+            <label for="open-file">Open File (Text Only)</label>
+            <input type="file" name="open-file" accept=".txt, .json">
+
+            <label for="open-file-img">Open File (Images Only)</label>
+            <input type="file" name="open-file-img" accept=".jpg, .png">
+
+            <label for="submit">Submit Button</label>
+            <input type="submit" name="submit">
+
+            <label for="reset">Reset Button</label>
+            <input type="reset" name="reset">
+        </div>
+        <div class='section stack'>
+            <label for="radio">Radio Button</label>
+            <input type="radio" name="radio">
+
+            <label for="checkbox1">Checkboxes</label>
+            <div class='section group'>
+                <input type="checkbox" name="checkbox1">A</input>
+
+                <input type="checkbox" name="checkbox2">B</input>
+
+                <input type="checkbox" name="checkbox3">C</input>
+            </div>
+
+            <label for="color">Color</label>
+            <input type="color" name="color">
+
+            <label for="date">Date</label>
+            <input type="date" name="date">
+
+            <label for="datetime-local">Datetime Local</label>
+            <input type="datetime-local" name="datetime-local">
+
+            <label for="month">Month</label>
+            <input type="month" name="month">
+
+            <label for="week">Week</label>
+            <input type="week" name="week">
+
+        </div>
+        <div class='section stack output'>
+            <h3>Output of Above Buttons</h3>
+            <div id='output' class='output'>
+                <img id="output">
+            </div>
+        </div>
+    </div>
+
+    <div class='section form'>
+        <h1>Forms and Dropdowns</h1>
+        <div class='section stack'></div>
+        <div class='section stack'></div>
+        <div class='section stack'></div>
+    </div>
+
+</body>
+</html>
