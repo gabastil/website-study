@@ -7,49 +7,89 @@
 
  $(document).ready(function(){
 
+    const TEXT = $("input[type='text']"),
+          TEXTAREA = $("textarea"),
+          EMAIL = $("input[type='email']"),
+          PASSWORD = $("input[type='password']"),
+
+          DROPDOWN = $("select#dropdown"),
+          DROPDOWN_EMPTY = $("select#dropdown-empty"),
+          MULTIPLE_SELECT = $("select#multiple-select"),
+
+          RANGE = $("input[type='range']"),
+
+          BUTTON = $("button[name='button']"),
+          SUBMIT = $("submit[type='submit']"),
+
+          COLOR = $("input[type='color']"),
+
+          FILE_TXT = $("input[name='open-file-txt']"),
+          FILE_IMG = $("input[name='open-file-img']"),
+          OUTPUT1 = $("div#output"),
+          OUTPUT2 = $("img#output");
+
+    console.log(DROPDOWN_EMPTY);
+
     function readText(){
-        let text = $("input[type='text']");
-        let textarea = $("textarea[name='textarea']");
-        let email = $("input[type='email']");
-        let password = $("input[type='password']");
+        // Read user specified text file in <input type="file">
+        let text_ = TEXT.val() + TEXTAREA.val();
+        let option = `<option>${EMAIL.val()}</option>`;
 
-        let text_ = text.val() + textarea.val();
-        let output = $("div#output");
+        DROPDOWN_EMPTY.append(option);
+        console.log(EMAIL.val());
+        console.log(PASSWORD.val());
 
-        console.log(email.val());
-        console.log(password.val());
-
-        if (output.text().length > 100){
-            output.text(text_);
+        if (OUTPUT1.text().length > 100){
+            OUTPUT1.text(text_);
         } else {
-            output.text(output.text() + text_);
+            OUTPUT1.text(OUTPUT1.text() + text_);
         }
     };
 
-    function loadFile(event){
-        let file_img = $("input[name='open-file-img']")[0];
-        let file = $("input[name='open-file']")[0];
 
-        let target_img = $("img[id='output']");
+    function loadFile(event){
+        // Read user specified image file in <input type="file">
         let reader = new FileReader();
 
         reader.onload = function(e){
-            // console.log(reader.result);
-            target_img.attr("src", reader.result);
+            OUTPUT2.attr("src", reader.result);
         }
-        // console.log(event.files);
 
-        reader.readAsDataURL(file_img.files[0]);
+        reader.readAsDataURL(FILE_IMG[0].files[0]);
     }
+
 
     function updateNumber(event){
-        let ranger = $(this);
         let ranger_label = $('label[for="range"]');
-        ranger_label.text(`Range ${ranger.val()}`);
+        ranger_label.text(`Range ${RANGE.val()}`);
     }
 
-    $("button[name='button']").click(readText);
-    $("input[name='submit']").click(loadFile);
-    $("input[type='range']").change(updateNumber);
+
+    function getColor(event){
+        // Change the font color of the color input label to user specified
+        let color_label = $("label[for='color']");
+
+        console.log(COLOR);
+        console.log(COLOR.val());
+
+        color_label.css('color', COLOR.val());
+    }
+
+
+    function reset(){
+        OUTPUT1.text("");
+        OUTPUT2.attr("src", "");
+    }
+
+    function updateOption1(){
+        OUTPUT1.text($(this).val());
+    }
+
+    BUTTON.click(readText);
+    SUBMIT.click(loadFile);
+    RANGE.change(updateNumber);
+    COLOR.change(getColor);
+    MULTIPLE_SELECT.change(updateOption1);
+
 
  });

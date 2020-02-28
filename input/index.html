@@ -48,13 +48,13 @@
         <div class='section stack'>
             <h3>Dropdowns and Lists</h3>
             <label for="dropdown">Dropdown Box</label>
-            <select>
+            <select id='dropdown'>
                 <option>One</option>
                 <option>Two</option>
             </select>
 
             <label for="dropdown-empty">Dropdown Box (Empty)</label>
-            <select></select>
+            <select id='dropdown-empty'></select>
 
             <label for='range'>Range</label>
             <input type="range" name="range">
@@ -113,6 +113,12 @@
             <label for="week">Week</label>
             <input type="week" name="week">
 
+
+            <label for="multiple-select">Multiple Select</label>
+            <select id='multiple-select' multiple>
+                <option selection="selected">First</option>
+                <option>Second</option>
+            </select>
         </div>
         <div class='section stack output'>
             <h3>Output of Above Buttons</h3>
