@@ -1,0 +1,39 @@
+/**
+ * Filename: index.css
+ * Author: Glenn Abastillas
+ * Date: February 18, 2020
+ *
+ * Stylesheet for cluster study
+ */
+
+html, body, svg
+{
+    height: 100%;
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+}
+
+svg
+{
+    background: white;
+    border-radius: 1em;
+}
+
+
+svg text
+{
+    font-family: 'Helvetica', sans-serif;
+    font-size: 2em;
+}
+
+.container
+{
+    padding: 1em;
+    background: #dfefff;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
