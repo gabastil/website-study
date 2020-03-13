@@ -3,21 +3,25 @@
  * Author: Glenn Abastillas
  * Date: February 18, 2020
  *
- * Functions to draw and create clusters
+ * Functions to draw and create clusters for the cluster study.s
  */
 
 $(document).ready(function(){
     const svg = d3.select("svg");
     const g = svg.append("g").attr("id", "group");
-    const data = Circles.data(73);
+    const data = Circles.data(5);
 
     Circles.draw(g, data);
-    console.log(data);
-    Circles.sort_data(data);
+    console.log(Sets.attrs(data, 'y'));
+    // Circles.sort_data(data);
+    // data[0] = data[4];
+    Sets.quicksort(data, 0, data.length - 1, 'y');
+    console.log(Sets.attrs(data, 'y'));
 
-    let array = Random.between(5, 20, 5);
-    console.log(`For array ${array}, partition is at ${Sets.partition(array, 0, 4)}`);
-    console.log(`Partitioned array ${array}`);
+    // - - - - - -- - - - - -- - - - - -- - - - - -
+    //
+    // - - - - - -- - - - - -- - - - - -- - - - - -
+
 })
 
 class Circles {
@@ -68,7 +72,6 @@ class Circles {
      * @returns {array} List of objects with data for circles
      */
      static draw(selection, data){
-        console.log(selection);
         selection.selectAll("circle")
                  .data(data)
                  .enter()
@@ -107,7 +110,7 @@ class Circles {
             }
         }
 
-        console.log(sorted);
+        // console.log(sorted);
      }
 }
 
@@ -188,7 +191,7 @@ class Random {
 class Sets {
 
     /**
-     *
+     * Replace the positions of two numbers in place
      * @param {array} array - smaller array
      * @param {integer} ab - index of first number
      * @param {integer} ab - index of first number
@@ -201,47 +204,171 @@ class Sets {
 
     /**
      * Implement partition function for quicksort algorithm
-     * @param {array} array -
-     * @param {integer} low -
-     * @param {integer} high -
+     * @param {array} array - array of items to sort
+     * @param {integer} low - index of first element
+     * @param {integer} high - index of last element
+     * @param {string} attr - name of attribute to return
      */
-    static partition(array, low, high){
-        let pivot = array[high];
-        let left = low, right = high - 1;
+    static partition(array, low, high, attr = null){
+        let pivot = array[high],
+            left_value,
+            right_value;
+        let left = low,
+            right = high - 1;
 
-        console.log(`In partition(): ${array}`);
+        if (attr != null){
+            pivot = array[high][attr];
+        }
+
+        // console.log(`In partition(): ${array}`);
+        // console.log(array);
 
         while (left < right){
-            while (array[left] < pivot && left < right){
+            left_value = array[left];
+            right_value = array[right];
+
+            if (attr != null){
+                left_value = left_value[attr];
+                right_value = right_value[attr];
+            }
+
+            while (left_value < pivot && left < right){
                 left++;
             }
-            while (array[right] > pivot && left < right){
+            while (right_value > pivot && left < right){
                 right--;
             }
 
-            if (array[left] > array[right]){
+            if (left_value > right_value){
+                console.log(array);
                 this.swap(array, left, right);
                 left++;
                 right--;
             }
-            console.log(`In partition, pass is ${array}`);
+            // console.log(`In partition, pass is`); // ${array}`);
+            console.log(array);
         }
-        // this.swap(array, left, high);
-        console.log(`In partition(): ${array} with left as ${left} and right as ${right}`);
+        this.swap(array, left, high);
+        // console.log(`In partition(): ${this.attrs(array, attr)} with left as ${left} and right as ${right}`);
+        // console.log(left);
         return left;
     }
 
     /**
      * Implement the quicksort algorithm
-     * @param {array} array -
-     * @param {integer} low -
-     * @param {integer} high -
+     * @param {array} array - array of items to sort
+     * @param {integer} low - index of first element
+     * @param {integer} high - index of last element
+     * @param {string} attr - name of attribute to return
      */
-    static quicksort(array, low, high){
+    static quicksort(array, low, high, attr = null){
         if (low < high){
-            index = self.partition(array, low, high);
-            this.quicksort(array, low, index - 1);
-            this.quicksort(array, index + 1, high);
+            let index = this.partition(array, low, high, attr);
+            this.quicksort(array, low, index - 1, attr);
+            this.quicksort(array, index + 1, high, attr);
         }
+    }
+
+    /**
+     * Return an array of attribute values
+     * @param {array [Object]} set - array of objects with attributes
+     * @param {string} attribute - name of attribute to return
+     */
+     static attrs(set, attribute){
+        let attributes = [], element;
+        for (element of set){
+            try {
+                attributes.push(element[attribute]);
+            } catch(err) {
+                console.warn(`Could not find ${attribute} in ${element}.`);
+            }
+        }
+        return attributes;
+     }
+
+    /**
+     * Set an array of objects' attributes with values in an array
+     * @param {array [Object]} set - array of objects with attributes
+     * @param {array [int, string]} attributes - array of attributes
+     * @param {string} attribute - name of attribute to assign
+     */
+     static set_attrs(set, attributes){
+        if (set.length != attributes.length){
+            let error = "Number of objects does not match number of attributes";
+            console.error(error);
+        }
+
+        for (let i in attributes){
+            set[i][attribute] = attributes[i];
+        }
+     }
+}
+
+class Collisions {
+    /**
+     * Collisions class contains methods to detect collisions and spread objects
+     * apart so as to avoid collisions
+     */
+
+    memo = {};
+
+    /**
+     * Add a key and value pair into an object.
+     * @param {object} object - object to add key and value to
+     * @param {string, object, int} key - key for object
+     * @param {string, object, int} value - value to assign to key
+     */
+    static add_value(object, key, value){
+        object[key] = value;
+    }
+
+    /**
+     * Delete a key and value pair into an object.
+     * @param {object} object - object to delete a key and value from
+     * @param {string, object, int} key - key to delete
+     */
+    static delete_key(object, key){
+        delete object[key];
+    }
+
+    /**
+     * Detect whether or not a key exists in an object
+     * @param {string, object, int} key - key to search for
+     * @param {object} object - object to check presence of key in
+     */
+    static has_key(key, object){
+        if (object != undefined){
+            return object.hasOwnProperty(key);
+        } else {
+            return this.memo.hasOwnProperty(key);
+        }
+    }
+
+    /**
+     * Detect a collision between two objects. A collision is defined as the
+     * overlap between two objects' areas.
+     * @param {object} a - First object to detect collision against b
+     * @param {object} b - Second object to detect collision against a
+     * @returns {bool} True if objects collide, False otherwise.
+     */
+    static has_collision(a, b){
+        if (this.has_key(a) && this.has_key(b, this.memo[a])){
+            return this.memo[a][b];
+        } else {
+            // Implement detection here
+        }
+    }
+
+    /**
+     * Detect a collision between two objects. A collision is defined as the
+     * overlap between two objects' areas.
+     * @param {array [object]} set - array of objects to detect collision
+     */
+    static get_collisions(set){
+        let collisions = [], i;
+        for (i in set.slice(0, set.length - 1)){
+            collisions.push(this.has_collision(set[i], set[i+1]));
+        }
+        return collisions;
     }
 }
