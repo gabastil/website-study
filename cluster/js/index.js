@@ -18,16 +18,55 @@
 $(document).ready(function(){
     const svg = d3.select("svg");
     const g = svg.append("g").attr("id", "group");
-    const data = Circles.data(20, r=[50,75]);
+    const data = Circles.data(20, r=[25,50]);
 
     Circles.draw(g, data);
+    console.log(data);
+
+    // svg.selectAll("text").data(data).enter().append("text").attr("x", function(d){return d.x}).attr("y", function(d){return d.y}).attr("font-size", function(d){return `${d.r / 50}em`}).text(function(d){return Math.round(d.area,1)});
+    // $('svg circle').hover(function(e){
+    //     let obj = d3.select(this);
+    //     obj.text($(this))
+    // });
+
     Sets.quicksort(data, 0, data.length - 1, 'y');
 
     let memo = {};
-    let test = { a : 'b', c : {b : 'a'}};
+
+    console.log(data[0]);
+    console.log(data[1]);
+    console.log(data[0].detect_side(data[1]));
+
+    let c1 = new Circle(100, 100, 10), c2 = new Circle(100, 100, 10);
+
+    console.log(c1.detect_side(c2));
+
+    // setInterval(function(){
+    //     let circle = $("circle[id='c1']");
+    //     let current = {"x" : circle.attr("cx"),
+    //                    "y" : circle.attr("cy")};
+    //     circle.attr("cx", parseFloat(current.x) + 5);
+    //     circle.attr("cy", parseFloat(current.y) + 5);
+
+    //     let out_of_bounds_left = $(window).position().left > circle.attr("cx");
+    //     let out_of_bounds_right = $(window).position().right < circle.attr("cx");
+    //     let out_of_bounds_top = $(window).position().top;
+    //     let out_of_bounds_bottom = $(window).position().bottom;
+
+    //     let out_of_bounds = out_of_bounds_left && out_of_bounds_right && out_of_bounds_top && out_of_bounds_bottom;
+
+    //     if (out_of_bounds){
+    //         clearInterval(this);
+
+    //     }
+    // }, 1000);
+
+    // setInterval(function(){console.log("Test")}, 1000);
     // console.log(Collisions.has_subkey(test, 'b'));
-    console.log(Collisions.get_collisions(data, memo));
-    console.log(memo);
+    // console.log(Collisions.get_collisions(data, memo));
+    // console.log(memo);
+
+    // console.log(`${c.x} and ${c.y} and ${c.r} and ${c.h}.`)
     // console.log(data[0].x > 0 && (data[0].h > 0 || data[0].r > 0));
     // console.log(data[0].x);
     // console.log(data[0].overlaps(data[1]));
@@ -54,33 +93,109 @@ class Shape {
         this.w = obj.w; // Shape width
         this.h = obj.h; // Shape height
         this.r = obj.r; // Shape radius
+        this.id = obj.id; // Shape id
     }
 
+    get top(){
+        if (this.r != undefined){
+            return this.y - this.r;
+        } else {
+            return this.y;
+        }
+    }
+
+    get right(){
+        if (this.r != undefined){
+            return this.x + this.r;
+        } else {
+            return this.x + this.w;
+        }
+    }
+
+    get bottom(){
+        if (this.r != undefined){
+            return this.y + this.r;
+        } else {
+            return this.y + this.h;
+        }
+    }
+
+    get left(){
+        if (this.r != undefined){
+            return this.x - this.r;
+        } else {
+            return this.x;
+        }
+    }
+
+    get center(){
+        if (this.r != undefined){
+            return {'x' : this.x, 'y' : this.y};
+        } else {
+            return {'x' : this.x + this.w / 2, 'y' : this.y + this.h / 2};
+        }
+    }
+
+    get area(){
+        if (this.r != undefined){
+            return 2 * Math.PI * this.r;
+        }
+        return this.w * this.h;
+    }
+
+    /**
+     * Check if this shape contains the specified shape's top border
+     * @param {Shape, object} shape - object to check for overlap
+     */
+    contains_top(shape){
+        return (this.top < shape.top) && (shape.top <= this.bottom);
+    }
+
+    /**
+     * Check if this shape contains the specified shape's right border
+     * @param {Shape, object} shape - object to check for overlap
+     */
+    contains_right(shape){
+        return (this.left < shape.right) && (shape.right <= this.right);
+    }
+
+    /**
+     * Check if this shape contains the specified shape's bottom border
+     * @param {Shape, object} shape - object to check for overlap
+     */
+    contains_bottom(shape){
+        return (this.top < shape.bottom) && (shape.bottom < this.bottom);
+    }
+
+    /**
+     * Check if this shape contains the specified shape's left border
+     * @param {Shape, object} shape - object to check for overlap
+     */
+    contains_left(shape){
+        return (this.left < shape.left) && (shape.left <= this.right);
+    }
 
     /**
      * Detect whether or not this shape horizontally overlaps another shape
      * @param {Shape, object} shape - another shape with dimension properties
      * @returns boolean - true if there is overlap, false if there is no overlap
      */
-    overlaps_horizontally(shape){
+    horizontal_overlap(shape){
         if (this.w != undefined){
-            let overlaps = (shape.x > this.x) && (shape.x < this.x + this.w);
-            return overlaps;
+            return this.contains_left(shape) || this.contains_right(shape);
         } else {
             return shape.x == this.x;;
         }
     }
-
 
     /**
      * Detect whether or not this shape vertically overlaps another shape
      * @param {Shape, object} shape - another shape with dimension properties
      * @returns boolean - true if there is overlap, false if there is no overlap
      */
-    overlaps_vertically(shape){
+    vertical_overlap(shape){
         if (this.h != undefined){
-            let overlaps = (shape.y > this.y) && (shape.y < this.y + this.h);
-            return overlaps;
+            return this.contains_top(shape) || this.contains_bottom(shape);
         } else {
             return shape.y == this.y;;
         }
@@ -96,15 +211,121 @@ class Shape {
             let r_squared = (shape.x - this.x)**2 + (shape.y - this.y)**2;
             return Math.sqrt(r_squared) < (shape.r + this.r);
         } else if (this.w != undefined && this.h != undefined){
-            let horizontal_overlap = this.overlaps_horizontally(shape);
-            let vertical_overlap = this.overlaps_vertically(shape);
+            let horizontal_overlap = this.horizontal_overlap(shape);
+            let vertical_overlap = this.vertical_overlap(shape);
             return horizontal_overlap && vertical_overlap;
         }
+        return false;
     }
 
+    /**
+     * Return true of the this shape is top to the specified shape
+     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     *
+     */
+    is_top_to(shape){
+        if (shape.center.y > this.center.y){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return true of the this shape is right to the specified shape
+     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     *
+     */
+    is_right_to(shape){
+        if (shape.center.x < this.center.x){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return true of the this shape is bottom to the specified shape
+     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     *
+     */
+    is_bottom_to(shape){
+        if (shape.center.y < this.center.y){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return true of the this shape is left to the specified shape
+     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     *
+     */
+    is_left_to(shape){
+        if (shape.center.x > this.center.x){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return which side a specified shape is oriented w.r.t. this shape
+     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     */
+    detect_side(shape){
+        let top = this.is_top_to(shape),
+            right = this.is_right_to(shape),
+            bottom = this.is_bottom_to(shape),
+            left = this.is_left_to(shape);
+
+        return {top : top, right : right, bottom : bottom, left : left};
+    }
+
+    /**
+     * If the specified shape overlaps this shape, move it so there is no over-
+     * lap.
+     * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions.
+     * @param {integer} buffer - Amount of pixels to have in between shapes.
+     */
+    push(shape, buffer=10){
+        let side = this.detect_side(shape);
+        let overlap = this.overlaps(shape);
+        let shape_type = this.r === undefined ? 'r' : 'c';
+        let shape = d3.select(`${shape_type}${shape.id}`)
+                      .transition()
+                      .duration(500);
+
+        if (overlap && shape_type === 'c') {
+            let move_cx, move_cy;
+
+            if (side.bottom) {
+                move_cy = shape.y + buffer + this.r + this.y;
+            } else if (side.top) {
+                move_cy = shape.y + buffer + this.r + this.y;
+            }
+
+            if (side.right) {
+
+            } else if (side.left) {
+
+            }
+
+            // shape.attr("cx", this.center.x + this.r + buffer + shape.center.x)
+            //      .attr("cy", this.center.y + this.r + buffer + shape.center.y);
+        } else if (overlap && shape_type === 'r'){}
+    }
 }
 
-class Circles {
+class Circle extends Shape{
+    constructor(x, y, r, id){
+        super({'x' : x, 'y' : y, 'r' : r, 'id' : `c${id}`});
+    }
+}
+class Rectangle extends Shape{
+    constructor(x, y, w, h, id){
+        super({'x' : x, 'y' : y, 'w' : w, 'h' : h, 'id' : `r${id}`});
+    }
+}
+
+class Circles{
 
     /**
      * Generate geometry for n Circles
@@ -130,18 +351,11 @@ class Circles {
         let y = Random.between(0, $(window).height(), n);
         let radii = Random.between(...r, n);
 
-        let index = 0, data = [], circle;
-        let overlap_function = function(shape){
-            let A = (shape.x - this.x)**2 + (shape.y - this.y)**2;
-            return Math.sqrt(A) < this.r + shape.r;
-        }
+        let index = 0, data = [], circle, cx, cy, cr;
 
         while (index < n){
-            circle = { x : x[index],
-                       y : y[index],
-                       r : radii[index],
-                       id : n - index,
-                       overlaps : overlap_function};
+            [cx, cy, cr] = [x[index], y[index], radii[index]];
+            circle = new Circle(cx, cy, cr, n - index);
             data.push(circle);
             index++;
         }

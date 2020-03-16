@@ -27,6 +27,9 @@ svg text
 {
     font-family: 'Helvetica', sans-serif;
     font-size: 2em;
+    /*text-anchor: middle;*/
+    vertical-align: middle;
+    alignment-baseline: middle;
 }
 
 circle
