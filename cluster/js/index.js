@@ -3,7 +3,16 @@
  * Author: Glenn Abastillas
  * Date: February 18, 2020
  *
- * Functions to draw and create clusters for the cluster study.s
+ * Functions to draw and create clusters for the cluster study.
+ *
+ * Classes
+ * -------
+ *      Shape : Parent class of all shapes with general attributes and methods
+ *      Circles : Define and create individual circles and arrays of circles
+ *      Random : Generate random integers and arrays of random integers
+ *      Sets : Functions to manipulate sets like sorting.
+ *      Collisions : Functions to detect collisions between shapes
+ *
  */
 
 $(document).ready(function(){
@@ -29,6 +38,71 @@ $(document).ready(function(){
     // - - - - - -- - - - - -- - - - - -- - - - - -
 
 });
+
+class Shape {
+    /**
+     * Generic constructor for the Shape object.
+     * @param {Object} obj - Object with shape information
+     *      - Generic shape properties are:
+     *              x, y, w, h, r
+     *
+     * @constructor
+     */
+    constructor(obj){
+        this.x = obj.x; // Shape x coordinate
+        this.y = obj.y; // Shape y coordinate
+        this.w = obj.w; // Shape width
+        this.h = obj.h; // Shape height
+        this.r = obj.r; // Shape radius
+    }
+
+
+    /**
+     * Detect whether or not this shape horizontally overlaps another shape
+     * @param {Shape, object} shape - another shape with dimension properties
+     * @returns boolean - true if there is overlap, false if there is no overlap
+     */
+    overlaps_horizontally(shape){
+        if (this.w != undefined){
+            let overlaps = (shape.x > this.x) && (shape.x < this.x + this.w);
+            return overlaps;
+        } else {
+            return shape.x == this.x;;
+        }
+    }
+
+
+    /**
+     * Detect whether or not this shape vertically overlaps another shape
+     * @param {Shape, object} shape - another shape with dimension properties
+     * @returns boolean - true if there is overlap, false if there is no overlap
+     */
+    overlaps_vertically(shape){
+        if (this.h != undefined){
+            let overlaps = (shape.y > this.y) && (shape.y < this.y + this.h);
+            return overlaps;
+        } else {
+            return shape.y == this.y;;
+        }
+    }
+
+    /**
+     * Detect whether or not this shape overlaps another shape
+     * @param {Shape, object} shape - another shape with dimension properties
+     * @returns boolean - true if there is overlap, false if there is no overlap
+     */
+    overlaps(shape){
+        if (this.r != undefined){
+            let r_squared = (shape.x - this.x)**2 + (shape.y - this.y)**2;
+            return Math.sqrt(r_squared) < (shape.r + this.r);
+        } else if (this.w != undefined && this.h != undefined){
+            let horizontal_overlap = this.overlaps_horizontally(shape);
+            let vertical_overlap = this.overlaps_vertically(shape);
+            return horizontal_overlap && vertical_overlap;
+        }
+    }
+
+}
 
 class Circles {
 
