@@ -19,6 +19,7 @@ svg
 {
     background: white;
     border-radius: 1em;
+    /* filter: blur(0.05rem); */
 }
 
 
@@ -26,6 +27,19 @@ svg text
 {
     font-family: 'Helvetica', sans-serif;
     font-size: 2em;
+}
+
+circle
+{
+    fill: green;
+    transition: all 0.2s ease;
+}
+
+circle:hover
+{
+    stroke-width: 1em;
+    fill: red;
+    transition: all 0.2s ease;
 }
 
 .container

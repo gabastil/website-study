@@ -9,20 +9,26 @@
 $(document).ready(function(){
     const svg = d3.select("svg");
     const g = svg.append("g").attr("id", "group");
-    const data = Circles.data(5);
+    const data = Circles.data(20, r=[50,75]);
 
     Circles.draw(g, data);
-    console.log(Sets.attrs(data, 'y'));
-    // Circles.sort_data(data);
-    // data[0] = data[4];
     Sets.quicksort(data, 0, data.length - 1, 'y');
-    console.log(Sets.attrs(data, 'y'));
+
+    let memo = {};
+    let test = { a : 'b', c : {b : 'a'}};
+    // console.log(Collisions.has_subkey(test, 'b'));
+    console.log(Collisions.get_collisions(data, memo));
+    console.log(memo);
+    // console.log(data[0].x > 0 && (data[0].h > 0 || data[0].r > 0));
+    // console.log(data[0].x);
+    // console.log(data[0].overlaps(data[1]));
+    // console.log(2**3);
 
     // - - - - - -- - - - - -- - - - - -- - - - - -
     //
     // - - - - - -- - - - - -- - - - - -- - - - - -
 
-})
+});
 
 class Circles {
 
@@ -45,18 +51,23 @@ class Circles {
      * @param {integer} n - Number of circles to generate data for
      * @returns {array} List of objects with data for circles
      */
-    static data(n = 20){
+    static data(n = 20, r=[5,25]){
         let x = Random.between(0, $(window).width(), n);
         let y = Random.between(0, $(window).height(), n);
-        let radii = Random.between(1, 25, n);
+        let radii = Random.between(...r, n);
 
         let index = 0, data = [], circle;
+        let overlap_function = function(shape){
+            let A = (shape.x - this.x)**2 + (shape.y - this.y)**2;
+            return Math.sqrt(A) < this.r + shape.r;
+        }
 
         while (index < n){
             circle = { x : x[index],
                        y : y[index],
                        r : radii[index],
-                       id : n - index};
+                       id : n - index,
+                       overlaps : overlap_function};
             data.push(circle);
             index++;
         }
@@ -240,13 +251,12 @@ class Sets {
             }
 
             if (left_value > right_value){
-                console.log(array);
                 this.swap(array, left, right);
                 left++;
                 right--;
             }
             // console.log(`In partition, pass is`); // ${array}`);
-            console.log(array);
+            // console.log(array);
         }
         this.swap(array, left, high);
         // console.log(`In partition(): ${this.attrs(array, attr)} with left as ${left} and right as ${right}`);
@@ -310,16 +320,52 @@ class Collisions {
      * apart so as to avoid collisions
      */
 
-    memo = {};
 
     /**
-     * Add a key and value pair into an object.
+     * Convert an object into a string
+     * @param {object} object - object to convert into a string
+     */
+    static str(object){
+        if (object instanceof Object){
+            return JSON.stringify(object);
+        }
+        return object;
+    }
+
+    /**
+     * Add a key and value pair into an object. Convert the keys from JSON into
+     * strings in the process of assigning a value to the input object.
+     *
      * @param {object} object - object to add key and value to
-     * @param {string, object, int} key - key for object
+     * @param {string, object, int} key1 - key for object
+     * @param {string, object, int} key2 - key for object
      * @param {string, object, int} value - value to assign to key
      */
-    static add_value(object, key, value){
-        object[key] = value;
+    static record_memo(object, key1, key2, value){
+        key1 = key1.id;
+        key2 = key2.id;
+
+        let has_key1 = this.has_key(object, key1),
+            has_key2 = this.has_key(object, key2),
+            has_both_keys = has_key1 && has_key2;
+
+        let current = {}, current_inverse = {};
+
+
+        if (has_both_keys){
+            current = object[key1];
+            current_inverse = object[key2];
+        } else if (has_key1){
+            current = object[key1];
+        } else if (has_key2){
+            current = object[key2];
+        }
+
+        current[key2] = value;
+        object[key1] = current;
+
+        current_inverse[key1] = value;
+        object[key2] = current_inverse;
     }
 
     /**
@@ -328,7 +374,7 @@ class Collisions {
      * @param {string, object, int} key - key to delete
      */
     static delete_key(object, key){
-        delete object[key];
+        delete object[this.str(key)];
     }
 
     /**
@@ -336,12 +382,29 @@ class Collisions {
      * @param {string, object, int} key - key to search for
      * @param {object} object - object to check presence of key in
      */
-    static has_key(key, object){
-        if (object != undefined){
-            return object.hasOwnProperty(key);
-        } else {
-            return this.memo.hasOwnProperty(key);
+    static has_key(object, key){
+        if (object === undefined || object[key] === undefined){
+            return false;
         }
+        return true;
+    }
+
+    /**
+     * Detect whether or not a key exists in an object's values
+     * @param {string, object, int} key - key to search for
+     * @param {object} object - object to check presence of key in
+     */
+    static has_subkey(object, key){
+        let value = false, item;
+
+        for (item of object){
+            if (key in object[item]){
+                value = true;
+                break;
+            }
+        }
+
+        return [value, item];
     }
 
     /**
@@ -349,25 +412,58 @@ class Collisions {
      * overlap between two objects' areas.
      * @param {object} a - First object to detect collision against b
      * @param {object} b - Second object to detect collision against a
+     * @param {object} object - memo object with keys and values
      * @returns {bool} True if objects collide, False otherwise.
      */
-    static has_collision(a, b){
-        if (this.has_key(a) && this.has_key(b, this.memo[a])){
-            return this.memo[a][b];
-        } else {
-            // Implement detection here
+    static has_collision(a, b, object){
+        let checked_a = this.has_key(object, a),
+            checked_b = this.has_key(object, b);
+
+        // console.log(`checked_a ${checked_a} and checked_b ${checked_b}`);
+        // console.log(this.has_subkey(object, b));
+        if (checked_a){
+            let checked_a_sub = this.has_key(object[a], b);
+            if (checked_a_sub != undefined && checked_a_sub === true){
+                return object[this.str(a)][this.str(b)];
+            }
+        } else if(checked_b) {
+            let checked_b_sub = this.has_key(object[b], a);
+            if (checked_b_sub != undefined && checked_b_sub === true){
+                return object[this.str(b)][this.str(a)];
+            }
         }
+        this.record_memo(object, a, b, a.overlaps(b));
+        return a.overlaps(b);
     }
 
     /**
      * Detect a collision between two objects. A collision is defined as the
      * overlap between two objects' areas.
      * @param {array [object]} set - array of objects to detect collision
+     * @param {object} object - memo object with keys and values
      */
-    static get_collisions(set){
-        let collisions = [], i;
-        for (i in set.slice(0, set.length - 1)){
-            collisions.push(this.has_collision(set[i], set[i+1]));
+    static get_collisions(set, object){
+        let collisions = [], max_size = set.length - 2, i = 0, j = i;
+        let first, second, overlaps;
+
+        while (i < max_size) {
+            first = set[i];
+
+            while (j < max_size){
+                if (i === j){
+                    break;
+                }
+
+                second = set[j];
+                overlaps = this.has_collision(first, second, object);
+
+                if (overlaps) {
+                    collisions.push([first, second]);
+                }
+                j++;
+            }
+            j = 0;
+            i++;
         }
         return collisions;
     }
