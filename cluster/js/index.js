@@ -23,12 +23,6 @@ $(document).ready(function(){
     Circles.draw(g, data);
     console.log(data);
 
-    // svg.selectAll("text").data(data).enter().append("text").attr("x", function(d){return d.x}).attr("y", function(d){return d.y}).attr("font-size", function(d){return `${d.r / 50}em`}).text(function(d){return Math.round(d.area,1)});
-    // $('svg circle').hover(function(e){
-    //     let obj = d3.select(this);
-    //     obj.text($(this))
-    // });
-
     Sets.quicksort(data, 0, data.length - 1, 'y');
 
     let memo = {};
@@ -37,9 +31,36 @@ $(document).ready(function(){
     console.log(data[1]);
     console.log(data[0].detect_side(data[1]));
 
-    let c1 = new Circle(100, 100, 10), c2 = new Circle(100, 100, 10);
+    let c1 = new Circle(100, 100, 10), c2 = new Circle(101, 103, 10);
 
     console.log(c1.detect_side(c2));
+    // let q = c1.push(c2);
+
+    // svg.select(c2.id).transition().duration(1000).attr("cx", q[0]);
+
+    $("button").on("click", push_apart);
+
+    function push_apart(e){
+        let collisions = Collisions.get_collisions(data, memo);
+        let collisions_exist = collisions.length > 0;
+        let new_xy;
+        console.log(collisions.length);
+
+        // while (collisions_exist){
+            for (circle of collisions){
+                new_xy = circle[0].push(circle[1]);
+                console.log(new_xy);
+                // console.log(circle[1]);
+                svg.select(`circle[id='${circle[0].id}']`)
+                   .transition()
+                   .duration(250)
+                   .attr("cx", new_xy[0])
+                   .attr("cy", new_xy[1]);
+            }
+            // console.log(Collisions.get_collisions(data, memo).length);
+            // collisions_exist = false;
+        // }
+    }
 
     // setInterval(function(){
     //     let circle = $("circle[id='c1']");
@@ -208,8 +229,11 @@ class Shape {
      */
     overlaps(shape){
         if (this.r != undefined){
-            let r_squared = (shape.x - this.x)**2 + (shape.y - this.y)**2;
-            return Math.sqrt(r_squared) < (shape.r + this.r);
+            let x_squared = (shape.x - this.x)**2,
+                y_squared = (shape.y - this.y)**2,
+                H = Math.sqrt(x_squared + y_squared),
+                R = shape.r + this.r;
+            return R >= H;
         } else if (this.w != undefined && this.h != undefined){
             let horizontal_overlap = this.horizontal_overlap(shape);
             let vertical_overlap = this.vertical_overlap(shape);
@@ -285,32 +309,82 @@ class Shape {
      * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions.
      * @param {integer} buffer - Amount of pixels to have in between shapes.
      */
-    push(shape, buffer=10){
+    push(shape, buffer=1){
+        let svg = $("svg");
         let side = this.detect_side(shape);
         let overlap = this.overlaps(shape);
+        let centered = side.top && side.right && side.bottom && side.left;
         let shape_type = this.r === undefined ? 'r' : 'c';
-        let shape = d3.select(`${shape_type}${shape.id}`)
+        let shape_ = d3.select(`${shape_type}${shape.id}`)
                       .transition()
                       .duration(500);
 
-        if (overlap && shape_type === 'c') {
-            let move_cx, move_cy;
+        // console.log(side);
 
-            if (side.bottom) {
-                move_cy = shape.y + buffer + this.r + this.y;
-            } else if (side.top) {
-                move_cy = shape.y + buffer + this.r + this.y;
-            }
+        if (overlap && shape_type === 'c') {
+            let move_cx = this.x,
+                move_cy = this.y,
+                adjustment = this.r + shape.r;
+
+            console.log(move_cx);
+            console.log(move_cy);
+            console.log(adjustment);
 
             if (side.right) {
-
+                move_cx += adjustment;
             } else if (side.left) {
-
+                move_cx -= adjustment;
             }
 
-            // shape.attr("cx", this.center.x + this.r + buffer + shape.center.x)
-            //      .attr("cy", this.center.y + this.r + buffer + shape.center.y);
-        } else if (overlap && shape_type === 'r'){}
+            if (side.bottom) {
+                move_cy += adjustment;
+            } else if (side.top) {
+                move_cy -= adjustment;
+            }
+
+            if (move_cx > svg.width()) {
+                move_cx = svg.width();
+            } else if (move_cx < svg.position().left) {
+                move_cx = svg.position().left;
+            }
+
+            if (move_cy > svg.height()) {
+                move_cy = svg.height();
+            } else if (move_cy < svg.position().top) {
+                move_cy = svg.position().top;
+            }
+
+            return [move_cx, move_cy];
+
+        } else if (overlap && shape_type === 'r'){
+            let move_x = shape.x, move_y = shape.y;
+
+            if (side.right) {
+                move_x = this.x - (shape.w + buffer);
+            } else if (side.left) {
+                move_x = this.x + (this.w + buffer);
+            };
+
+            if (side.bottom) {
+                move_y = this.y - (shape.h + buffer);
+            } else if (side.top) {
+                move_y = this.y + (this.h + buffer);
+            }
+
+            if (move_cx > svg.width()) {
+                move_cx = svg.width();
+            } else if (move_cx < svg.position().left) {
+                move_cx = svg.position().left;
+            }
+
+            if (move_cy > svg.height()) {
+                move_cy = svg.height();
+            } else if (move_cy < svg.position().top) {
+                move_cy = svg.position().top;
+            }
+
+            return [move_x, move_y];
+        }
     }
 }
 
@@ -707,8 +781,6 @@ class Collisions {
         let checked_a = this.has_key(object, a),
             checked_b = this.has_key(object, b);
 
-        // console.log(`checked_a ${checked_a} and checked_b ${checked_b}`);
-        // console.log(this.has_subkey(object, b));
         if (checked_a){
             let checked_a_sub = this.has_key(object[a], b);
             if (checked_a_sub != undefined && checked_a_sub === true){
@@ -720,8 +792,10 @@ class Collisions {
                 return object[this.str(b)][this.str(a)];
             }
         }
-        this.record_memo(object, a, b, a.overlaps(b));
-        return a.overlaps(b);
+
+        let overlap = a.overlaps(b);
+        this.record_memo(object, a, b, overlap);
+        return overlap;
     }
 
     /**
@@ -739,15 +813,15 @@ class Collisions {
 
             while (j < max_size){
                 if (i === j){
-                    break;
+                } else {
+                    second = set[j];
+                    overlaps = this.has_collision(first, second, object);
+
+                    if (overlaps) {
+                        collisions.push([first, second]);
+                    }
                 }
 
-                second = set[j];
-                overlaps = this.has_collision(first, second, object);
-
-                if (overlaps) {
-                    collisions.push([first, second]);
-                }
                 j++;
             }
             j = 0;
