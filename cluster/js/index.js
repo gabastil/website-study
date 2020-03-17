@@ -41,25 +41,35 @@ $(document).ready(function(){
     $("button").on("click", push_apart);
 
     function push_apart(e){
-        let collisions = Collisions.get_collisions(data, memo);
+        let collisions = Collisions.get_collisions(data);
         let collisions_exist = collisions.length > 0;
         let new_xy;
         console.log(collisions.length);
 
-        // while (collisions_exist){
+        while (collisions_exist){
             for (circle of collisions){
                 new_xy = circle[0].push(circle[1]);
-                console.log(new_xy);
-                // console.log(circle[1]);
-                svg.select(`circle[id='${circle[0].id}']`)
-                   .transition()
-                   .duration(250)
-                   .attr("cx", new_xy[0])
-                   .attr("cy", new_xy[1]);
+
+                if (new_xy != undefined){
+                    console.log(circle[1]);
+                    console.log(new_xy);
+                    // circle[1].x = new_xy[0];
+                    // circle[1].y = new_xy[1];
+                    console.log(new_xy);
+                    // console.log(circle[1]);
+                    svg.select(`circle[id='${circle[0].id}']`)
+                       .transition()
+                       .duration(250)
+                       .attr("cx", new_xy[0])
+                       .attr("cy", new_xy[1]);
+                }
             }
+
+        // console.log(memo);
             // console.log(Collisions.get_collisions(data, memo).length);
-            // collisions_exist = false;
-        // }
+            // collisions_exist = Collisions.get_collisions(data).length > 0;
+            collisions_exist = false;
+        }
     }
 
     // setInterval(function(){
@@ -225,14 +235,15 @@ class Shape {
     /**
      * Detect whether or not this shape overlaps another shape
      * @param {Shape, object} shape - another shape with dimension properties
+     * @param {integer} buffer - Amount of pixels to have in between shapes.
      * @returns boolean - true if there is overlap, false if there is no overlap
      */
-    overlaps(shape){
+    overlaps(shape, buffer = 1){
         if (this.r != undefined){
             let x_squared = (shape.x - this.x)**2,
                 y_squared = (shape.y - this.y)**2,
                 H = Math.sqrt(x_squared + y_squared),
-                R = shape.r + this.r;
+                R = shape.r + this.r + buffer;
             return R >= H;
         } else if (this.w != undefined && this.h != undefined){
             let horizontal_overlap = this.horizontal_overlap(shape);
@@ -326,10 +337,6 @@ class Shape {
                 move_cy = this.y,
                 adjustment = this.r + shape.r;
 
-            console.log(move_cx);
-            console.log(move_cy);
-            console.log(adjustment);
-
             if (side.right) {
                 move_cx += adjustment;
             } else if (side.left) {
@@ -353,6 +360,9 @@ class Shape {
             } else if (move_cy < svg.position().top) {
                 move_cy = svg.position().top;
             }
+
+            shape.x = move_cx;
+            shape.y = move_cy;
 
             return [move_cx, move_cy];
 
@@ -802,9 +812,9 @@ class Collisions {
      * Detect a collision between two objects. A collision is defined as the
      * overlap between two objects' areas.
      * @param {array [object]} set - array of objects to detect collision
-     * @param {object} object - memo object with keys and values
      */
-    static get_collisions(set, object){
+    static get_collisions(set){
+        let memo = {};
         let collisions = [], max_size = set.length - 2, i = 0, j = i;
         let first, second, overlaps;
 
@@ -815,7 +825,7 @@ class Collisions {
                 if (i === j){
                 } else {
                     second = set[j];
-                    overlaps = this.has_collision(first, second, object);
+                    overlaps = this.has_collision(first, second, memo);
 
                     if (overlaps) {
                         collisions.push([first, second]);
