@@ -18,57 +18,86 @@
 $(document).ready(function(){
     const svg = d3.select("svg");
     const g = svg.append("g").attr("id", "group");
-    const data = Circles.data(20, r=[25,50]);
+    // const data = Circles.data(20, r=[25,50]);
+    const data = [new Circle(500, 500, 20, 1),
+                  new Circle(505, 535, 30, 2),
+                  new Circle(250, 100, 10, 3),
+                  new Circle(255, 105, 15, 4),
+                  new Circle(333, 235, 24, 5),
+                  new Circle(335, 242, 24, 6),
+                  new Circle(345, 241, 24, 7),
+                  new Circle(336, 249, 24, 8),
+                  new Circle(510, 591, 13, 9),
+                  new Circle(500, 595, 13, 10),
+                  new Circle(345, 241, 24, 11),
+                  new Circle(501, 600, 24, 12),
+                  ];
 
     Circles.draw(g, data);
-    console.log(data);
+    console.log(data[0].overlaps(data[1]));
 
     Sets.quicksort(data, 0, data.length - 1, 'y');
 
-    let memo = {};
-
-    console.log(data[0]);
-    console.log(data[1]);
-    console.log(data[0].detect_side(data[1]));
-
-    let c1 = new Circle(100, 100, 10), c2 = new Circle(101, 103, 10);
-
-    console.log(c1.detect_side(c2));
-    // let q = c1.push(c2);
-
-    // svg.select(c2.id).transition().duration(1000).attr("cx", q[0]);
+    svg.append("path").attr("stroke", "red").attr('stroke-width', '2px').attr("d", "M500,500 L512.2,585.9");
+    svg.append("path").attr("stroke", "blue").attr('stroke-width', '2px').attr("d", "M501,501 L508.07,549.5");
 
     $("button").on("click", push_apart);
 
     function push_apart(e){
         let collisions = Collisions.get_collisions(data);
-        let collisions_exist = collisions.length > 0;
-        let new_xy;
+        let collisions_exist = 0;
+        // let collisions_exist = collisions.length > 0;
+        // let completed_ids = [];
+        let new_xy, old_xy;
         console.log(collisions.length);
 
-        while (collisions_exist){
+        // let xy = collisions[0][0].push(collisions[0][1]);
+
+        // svg.select(`circle[id='${collisions[0][0].id}']`)
+        //    .transition()
+        //    .duration(250)
+        //    .attr("cx", xy[0])
+        //    .attr("cy", xy[1]);
+
+
+        // return;
+
+        while (collisions_exist < 10){
             for (circle of collisions){
+                old_xy = [circle[1].x, circle[1].y];
                 new_xy = circle[0].push(circle[1]);
 
+                // console.log(completed_ids.indexOf(circle[0].id));
+                // console.log(completed_ids);
+
+                // if(completed_ids.indexOf(circle[0].id) > -1){
+                    // continue;
+                // }
+
                 if (new_xy != undefined){
-                    console.log(circle[1]);
+                    // console.log(circle[1]);
+                    console.log(old_xy);
                     console.log(new_xy);
                     // circle[1].x = new_xy[0];
                     // circle[1].y = new_xy[1];
-                    console.log(new_xy);
+                    // console.log(new_xy);
                     // console.log(circle[1]);
                     svg.select(`circle[id='${circle[0].id}']`)
                        .transition()
                        .duration(250)
                        .attr("cx", new_xy[0])
                        .attr("cy", new_xy[1]);
+
+                    // completed_ids.push(circle[1].id);
+                    // completed_ids.push(circle[0].id);
+                    // completed_ids.push(circle[1]);
                 }
             }
 
         // console.log(memo);
             // console.log(Collisions.get_collisions(data, memo).length);
             // collisions_exist = Collisions.get_collisions(data).length > 0;
-            collisions_exist = false;
+            collisions_exist++;
         }
     }
 
@@ -119,11 +148,11 @@ class Shape {
      * @constructor
      */
     constructor(obj){
-        this.x = obj.x; // Shape x coordinate
-        this.y = obj.y; // Shape y coordinate
-        this.w = obj.w; // Shape width
-        this.h = obj.h; // Shape height
-        this.r = obj.r; // Shape radius
+        this.x = parseFloat(obj.x); // Shape x coordinate
+        this.y = parseFloat(obj.y); // Shape y coordinate
+        this.w = parseFloat(obj.w); // Shape width
+        this.h = parseFloat(obj.h); // Shape height
+        this.r = parseFloat(obj.r); // Shape radius
         this.id = obj.id; // Shape id
     }
 
@@ -238,13 +267,11 @@ class Shape {
      * @param {integer} buffer - Amount of pixels to have in between shapes.
      * @returns boolean - true if there is overlap, false if there is no overlap
      */
-    overlaps(shape, buffer = 1){
+    overlaps(shape, buffer = 0){
         if (this.r != undefined){
-            let x_squared = (shape.x - this.x)**2,
-                y_squared = (shape.y - this.y)**2,
-                H = Math.sqrt(x_squared + y_squared),
-                R = shape.r + this.r + buffer;
-            return R >= H;
+            let hypotenuse = this.hypotenuse(shape),
+                radius_and_buffer = shape.r + this.r + buffer;
+            return radius_and_buffer > hypotenuse;
         } else if (this.w != undefined && this.h != undefined){
             let horizontal_overlap = this.horizontal_overlap(shape);
             let vertical_overlap = this.vertical_overlap(shape);
@@ -255,7 +282,7 @@ class Shape {
 
     /**
      * Return true of the this shape is top to the specified shape
-     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions
      *
      */
     is_top_to(shape){
@@ -267,7 +294,7 @@ class Shape {
 
     /**
      * Return true of the this shape is right to the specified shape
-     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions
      *
      */
     is_right_to(shape){
@@ -279,7 +306,7 @@ class Shape {
 
     /**
      * Return true of the this shape is bottom to the specified shape
-     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions
      *
      */
     is_bottom_to(shape){
@@ -291,7 +318,7 @@ class Shape {
 
     /**
      * Return true of the this shape is left to the specified shape
-     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions
      *
      */
     is_left_to(shape){
@@ -303,7 +330,7 @@ class Shape {
 
     /**
      * Return which side a specified shape is oriented w.r.t. this shape
-     * @param {Shape, object} shape - Shape objectwith x,y,r,w,h dimensions
+     * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions
      */
     detect_side(shape){
         let top = this.is_top_to(shape),
@@ -315,38 +342,64 @@ class Shape {
     }
 
     /**
+     * Calculate the hypotenuse from the center of this Circle to another
+     * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions
+     * @returns {integer} hypotenuse
+     */
+    hypotenuse(shape){
+        let x_squared = (shape.x - this.x)**2,
+            y_squared = (shape.y - this.y)**2;
+        return Math.sqrt(x_squared + y_squared);
+    }
+
+    /**
      * If the specified shape overlaps this shape, move it so there is no over-
      * lap.
+     *
+     * @since 2020-03-17 Changed to assume circular shape
+     *
      * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions.
      * @param {integer} buffer - Amount of pixels to have in between shapes.
      */
-    push(shape, buffer=1){
+    push(shape, buffer=0){
         let svg = $("svg");
         let side = this.detect_side(shape);
-        let overlap = this.overlaps(shape);
-        let centered = side.top && side.right && side.bottom && side.left;
-        let shape_type = this.r === undefined ? 'r' : 'c';
+
+        let shape_type = (this.r === undefined) ? 'r' : 'c';
         let shape_ = d3.select(`${shape_type}${shape.id}`)
-                      .transition()
-                      .duration(500);
+                       .transition()
+                       .duration(500);
 
-        // console.log(side);
 
-        if (overlap && shape_type === 'c') {
-            let move_cx = this.x,
-                move_cy = this.y,
-                adjustment = this.r + shape.r;
+        let hypotenuse = this.hypotenuse(shape),
+            sin = Math.abs(shape.y - this.y) / hypotenuse,
+            cos = Math.abs(shape.x - this.x) / hypotenuse,
+            radii = shape.r + this.r + buffer;
+
+        console.log(`Hypotenuse ${hypotenuse} from shape.x ${shape.x} and shape.y ${shape.y}, and this.x ${this.x} and this.y ${this.y};\n` +
+                    `radii ${radii}; cos ${cos}; sin ${sin}\n` +
+                    `cos * radii ${cos * radii}; sin * radii ${sin * radii}` +
+                    `cos * radii + this.x ${cos*radii+this.x}; sin * radii + this.y ${parseFloat(sin*radii+this.y)}`);
+        console.log(`R+R ${shape.r + this.r} with a buffer of ${buffer}`);
+
+        console.log(`overlaps: ${this.overlaps(shape)}`);
+
+        if (this.overlaps(shape)) {
+            let adjust_x = cos * radii,
+                adjust_y = sin * radii,
+                move_cx = shape.x,
+                move_cy = shape.y;
 
             if (side.right) {
-                move_cx += adjustment;
+                move_cx += adjust_x;
             } else if (side.left) {
-                move_cx -= adjustment;
+                move_cx -= adjust_x;
             }
 
             if (side.bottom) {
-                move_cy += adjustment;
+                move_cy += adjust_y;
             } else if (side.top) {
-                move_cy -= adjustment;
+                move_cy -= adjust_y;
             }
 
             if (move_cx > svg.width()) {
@@ -361,39 +414,10 @@ class Shape {
                 move_cy = svg.position().top;
             }
 
-            shape.x = move_cx;
-            shape.y = move_cy;
+            this.x = move_cx;
+            this.y = move_cy;
 
             return [move_cx, move_cy];
-
-        } else if (overlap && shape_type === 'r'){
-            let move_x = shape.x, move_y = shape.y;
-
-            if (side.right) {
-                move_x = this.x - (shape.w + buffer);
-            } else if (side.left) {
-                move_x = this.x + (this.w + buffer);
-            };
-
-            if (side.bottom) {
-                move_y = this.y - (shape.h + buffer);
-            } else if (side.top) {
-                move_y = this.y + (this.h + buffer);
-            }
-
-            if (move_cx > svg.width()) {
-                move_cx = svg.width();
-            } else if (move_cx < svg.position().left) {
-                move_cx = svg.position().left;
-            }
-
-            if (move_cy > svg.height()) {
-                move_cy = svg.height();
-            } else if (move_cy < svg.position().top) {
-                move_cy = svg.position().top;
-            }
-
-            return [move_x, move_y];
         }
     }
 }
@@ -815,7 +839,7 @@ class Collisions {
      */
     static get_collisions(set){
         let memo = {};
-        let collisions = [], max_size = set.length - 2, i = 0, j = i;
+        let collisions = [], max_size = set.length, i = 0, j = i;
         let first, second, overlaps;
 
         while (i < max_size) {
