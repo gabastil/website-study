@@ -21,19 +21,19 @@ $(document).ready(function(){
     const data = Circles.data(20, r=[25,50]);
 
     Circles.draw(g, data);
-    console.log(data);
+    // console.log(data);
 
     Sets.quicksort(data, 0, data.length - 1, 'y');
 
     let memo = {};
 
-    console.log(data[0]);
-    console.log(data[1]);
-    console.log(data[0].detect_side(data[1]));
+    // console.log(data[0]);
+    // console.log(data[1]);
+    // console.log(data[0].detect_side(data[1]));
 
     let c1 = new Circle(100, 100, 10), c2 = new Circle(101, 103, 10);
 
-    console.log(c1.detect_side(c2));
+    // console.log(c1.detect_side(c2));
     // let q = c1.push(c2);
 
     // svg.select(c2.id).transition().duration(1000).attr("cx", q[0]);
@@ -41,21 +41,23 @@ $(document).ready(function(){
     $("button").on("click", push_apart);
 
     function push_apart(e){
+        console.log(Collisions.all_collisions(svg));
+        console.log(Circles.all_circles(svg));
         let collisions = Collisions.get_collisions(data);
         let collisions_exist = collisions.length > 0;
         let new_xy;
-        console.log(collisions.length);
+        // console.log(collisions.length);
 
         while (collisions_exist){
             for (circle of collisions){
                 new_xy = circle[0].push(circle[1]);
 
                 if (new_xy != undefined){
-                    console.log(circle[1]);
-                    console.log(new_xy);
+                    // console.log(circle[1]);
+                    // console.log(new_xy);
                     // circle[1].x = new_xy[0];
                     // circle[1].y = new_xy[1];
-                    console.log(new_xy);
+                    // console.log(new_xy);
                     // console.log(circle[1]);
                     svg.select(`circle[id='${circle[0].id}']`)
                        .transition()
@@ -403,6 +405,7 @@ class Circle extends Shape{
         super({'x' : x, 'y' : y, 'r' : r, 'id' : `c${id}`});
     }
 }
+
 class Rectangle extends Shape{
     constructor(x, y, w, h, id){
         super({'x' : x, 'y' : y, 'w' : w, 'h' : h, 'id' : `r${id}`});
@@ -495,6 +498,20 @@ class Circles{
 
         // console.log(sorted);
      }
+
+    /**
+     * Return an array of all circles present on the SVG canvas.
+     * @param {d3 selection} svg - the SVG canvas selection
+     * @returns {Array} array of Circle objects representing current shapes.
+     */
+    static all_circles(svg){
+        let circles = [],
+            push_circles = function(d){
+                                circles.push(new Circle(d.x, d.y, d.r, d.id));
+                           }
+        svg.selectAll("svg circle").each(push_circles);
+        return circles;
+    }
 }
 
 class Random {
@@ -837,6 +854,38 @@ class Collisions {
             j = 0;
             i++;
         }
+        return collisions;
+    }
+
+    /**
+     * TEST FUNCTION TO GET ALL ELEMENTS BY XPATH
+     *
+     *
+     */
+    static all_collisions(svg){
+        let circles = Circles.all_circles(svg);
+        let collisions = [];
+        let i = 0, j = 0, c1, c2;
+
+        while (i < circles.length){
+            c1 = circles[i];
+
+            while (j < circles.length){
+                if (i === j){
+                } else {
+                    c2 = circles[j];
+
+                    if (c1.overlaps(c2)){
+                        collisions.push(c1, c2);
+                    }
+                    // Implement function
+                }
+                j++;
+            }
+            j = 0;
+            i++;
+        }
+
         return collisions;
     }
 }
