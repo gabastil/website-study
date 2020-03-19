@@ -30,7 +30,12 @@ $(document).ready(function(){
                   new Circle(510, 591, 13, 9),
                   new Circle(500, 595, 13, 10),
                   new Circle(345, 241, 24, 11),
-                  new Circle(501, 600, 24, 12),
+                  new Circle(501, 606, 24, 12),
+                  new Circle(503, 607, 24, 13),
+                  new Circle(504, 608, 24, 14),
+                  new Circle(505, 609, 24, 15),
+                  new Circle(487, 640, 51, 17),
+                  new Circle(504, 606, 5, 18),
                   ];
 
     Circles.draw(g, data);
@@ -46,65 +51,39 @@ $(document).ready(function(){
     $("button").on("click", push_apart);
 
     function push_apart(e){
-        console.log(Collisions.all_collisions(svg));
+        // console.log(Collisions.all_collisions(svg));
         console.log(Circles.all_circles(svg));
-        let collisions = Collisions.get_collisions(data);
+        let collisions;
 
         let collisions_exist = 0;
         // let collisions_exist = collisions.length > 0;
         // let completed_ids = [];
         let new_xy, old_xy;
-        console.log(collisions.length);
-
-        // let xy = collisions[0][0].push(collisions[0][1]);
-
-        // svg.select(`circle[id='${collisions[0][0].id}']`)
-        //    .transition()
-        //    .duration(250)
-        //    .attr("cx", xy[0])
-        //    .attr("cy", xy[1]);
 
 
-        // return;
-
-        while (collisions_exist < 10){
+        while (collisions_exist < 100){
+            collisions = Collisions.get_collisions(data);
+            // collisions_exist = collisions.length > 0;
             for (circle of collisions){
                 old_xy = [circle[1].x, circle[1].y];
                 new_xy = circle[0].push(circle[1]);
 
-                // console.log(completed_ids.indexOf(circle[0].id));
-                // console.log(completed_ids);
-
-                // if(completed_ids.indexOf(circle[0].id) > -1){
-                    // continue;
-                // }
-
                 if (new_xy != undefined){
-                    // console.log(circle[1]);
-
-                    console.log(old_xy);
-                    console.log(new_xy);
-                    // circle[1].x = new_xy[0];
-                    // circle[1].y = new_xy[1];
-                    // console.log(new_xy);
-                    // console.log(circle[1]);
                     svg.select(`circle[id='${circle[0].id}']`)
                        .transition()
                        .duration(250)
                        .attr("cx", new_xy[0])
                        .attr("cy", new_xy[1]);
-
-                    // completed_ids.push(circle[1].id);
-                    // completed_ids.push(circle[0].id);
-                    // completed_ids.push(circle[1]);
                 }
             }
 
         // console.log(memo);
-            // console.log(Collisions.get_collisions(data, memo).length);
+            console.log(collisions.length);
             // collisions_exist = Collisions.get_collisions(data).length > 0;
             collisions_exist++;
         }
+
+        console.log(Collisions.all_collisions(svg));
     }
 
     // setInterval(function(){
@@ -367,7 +346,7 @@ class Shape {
      * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions.
      * @param {integer} buffer - Amount of pixels to have in between shapes.
      */
-    push(shape, buffer=0){
+    push(shape, buffer=2){
         let svg = $("svg");
         let side = this.detect_side(shape);
 
@@ -381,14 +360,6 @@ class Shape {
             sin = Math.abs(shape.y - this.y) / hypotenuse,
             cos = Math.abs(shape.x - this.x) / hypotenuse,
             radii = shape.r + this.r + buffer;
-
-        console.log(`Hypotenuse ${hypotenuse} from shape.x ${shape.x} and shape.y ${shape.y}, and this.x ${this.x} and this.y ${this.y};\n` +
-                    `radii ${radii}; cos ${cos}; sin ${sin}\n` +
-                    `cos * radii ${cos * radii}; sin * radii ${sin * radii}` +
-                    `cos * radii + this.x ${cos*radii+this.x}; sin * radii + this.y ${parseFloat(sin*radii+this.y)}`);
-        console.log(`R+R ${shape.r + this.r} with a buffer of ${buffer}`);
-
-        console.log(`overlaps: ${this.overlaps(shape)}`);
 
         if (this.overlaps(shape)) {
             let adjust_x = cos * radii,
@@ -426,6 +397,15 @@ class Shape {
             return [move_cx, move_cy];
         }
     }
+
+    /**
+     * If the specified shape is located far (> buffer) from this shape, change
+     * its coordinates so that it is closer to this shape.
+     *
+     * @param {Shape, object} shape - Shape object with x,y,r,w,h dimensions.
+     * @param {integer} buffer - Amount of pixels to have in between shapes.
+     */
+     static pull(shape, buffer=2){}
 }
 
 class Circle extends Shape{
@@ -477,7 +457,6 @@ class Circles{
 
         return data;
     }
-
 
     /**
      * Generate data for n Circles
@@ -613,6 +592,28 @@ class Random {
         }
 
         return chosen;
+    }
+}
+
+class Dict {
+    constructor(){
+        this.dict = {};
+    }
+
+    get(key){
+        return this.dict[key];
+    }
+
+    push(key, value){
+        if (this.dict.hasOwnProperty(key)){
+            this.dict[key].push(value);
+        } else {
+            this.dict[key] = [value];
+        }
+    }
+
+    has(key){
+        return this.dict.hasOwnProperty(key);
     }
 }
 
@@ -886,13 +887,12 @@ class Collisions {
     }
 
     /**
-     * TEST FUNCTION TO GET ALL ELEMENTS BY XPATH
-     *
-     *
+     * Get all collisions that exist on the SVG canvas.
+     * @params (d3 selection) svg - SVG canvas select via D3.
      */
     static all_collisions(svg){
         let circles = Circles.all_circles(svg);
-        let collisions = [];
+        let collisions = [], pair = [], dict = new Dict();
         let i = 0, j = 0, c1, c2;
 
         while (i < circles.length){
@@ -903,13 +903,26 @@ class Collisions {
                 } else {
                     c2 = circles[j];
 
-                    if (c1.overlaps(c2)){
-                        collisions.push(c1, c2);
+                    if (!dict.has(c1.id) || !dict.has(c2.id)){
+                        dict.push(c1.id, c2.id);
+                    } else {
+                        // console.log(dict);
                     }
-                    // Implement function
+
+                    if (c1.overlaps(c2)){
+                        pair.push(c1.id.slice(2),
+                                  c2.id.slice(2));
+                    }
                 }
                 j++;
             }
+
+            Sets.quicksort(pair);
+            if (pair.length > 0){
+                collisions.push(pair);
+                pair = [];
+            }
+
             j = 0;
             i++;
         }
