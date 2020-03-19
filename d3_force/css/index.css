@@ -1,0 +1,58 @@
+/**
+ * filename : index.css
+ * author : glenn abastillas
+ * created : march 19, 2020
+ * description : d3_force.css contains style definitions for the d3_force study
+ * index.html page.
+ */
+
+html, body {
+    font-family: "Helvetica", "Arial", sans-serif;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+h1 {
+    font-size: 1em;
+}
+
+p {
+    text-overflow: wrap;
+}
+
+div {
+    display: block;
+    position: relative;
+    height: 66%;
+    margin: auto;
+}
+
+svg {
+    background: #dfefff;
+    display: block;
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    border-radius: 1em;
+}
+
+svg text {
+    user-select: none;
+}
+
+#container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+.links
+{
+    stroke-width: 5px;
+    stroke: #000;
+}
