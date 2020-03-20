@@ -85,7 +85,7 @@ $(document).ready(function(){
                                                         target : Math.floor(Math.random() * 10)}});
 
     sim = d3.forceSimulation(nodes3);
-    sim.force('charge', d3.forceManyBody().strength(-20));
+    sim.force('charge', d3.forceManyBody().strength(-10));
     sim.force('center', d3.forceCenter(width / 2, height / 2));
     sim.force('link', d3.forceLink(links3).distance(31));
     sim.on('tick', ticked_3);
@@ -112,6 +112,25 @@ $(document).ready(function(){
     // Study 4 : Draggable
     let drag = d3.drag().on('start', dragstart).on('drag', dragged).on('end', dragend);
 
+    svg3.selectAll('circle').call(drag);
+
     // Implement drag
+    function dragstart(d){
+        d3.select(this).raise().classed('active', true);
+    }
+
+    function dragged(d){
+        d[0] = x.invert(d3.event.x);
+        d[1] = y.invert(d3.event.y);
+        console.log(d);
+        d3.select(this)
+            .attr('cx', x(d[0]))
+            .attr('cy', y(d[1]))
+        focus.select('path').attr('d', line);
+    }
+
+    function dragend(d){
+        d3.select(this).classed('active', false);
+    }
 
 });
