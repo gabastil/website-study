@@ -44,6 +44,19 @@ svg text {
     user-select: none;
 }
 
+svg text:hover {
+    fill: red;
+    font-size: 1.5em;
+    font-weight: 800;
+    transition: all 0.5s ease;
+}
+
+svg line {
+    stroke: #aaa;
+    stroke-width: 2px;
+    stroke-linecap: round;
+}
+
 #container {
     display: flex;
     flex-direction: row;
@@ -55,4 +68,19 @@ svg text {
 {
     stroke-width: 5px;
     stroke: #000;
+}
+
+.column {
+    width: 30%;
+}
+
+#canvas-1 circle:hover {
+    fill: fuchsia;
+    stroke: cornflowerblue;
+    transition: all 1s ease;
+}
+
+#canvas-3 circle:hover {
+    stroke: black;
+    stroke-width: 1px;
 }

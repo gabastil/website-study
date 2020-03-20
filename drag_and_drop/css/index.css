@@ -1,1 +1,102 @@
-ECHO is on.
+/**
+ * filename : index.css
+ * author : glenn abastillas
+ * created : march 19, 2020
+ * description : d3_force.css contains style definitions for the d3_force study
+ * index.html page.
+ */
+
+html, body {
+    font-family: "Helvetica", "Arial", sans-serif;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+h1 {
+    font-size: 1em;
+}
+
+p {
+    text-overflow: wrap;
+}
+
+div {
+    display: block;
+    position: relative;
+    height: 66%;
+    margin: auto;
+}
+
+svg {
+    border: solid 1px black;
+    display: block;
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    border-radius: 1em;
+}
+
+#container {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    height: 100%;
+    width: 100%;
+}
+
+.links
+{
+    stroke-width: 5px;
+    stroke: #000;
+}
+
+.column {
+    width: 30%;
+}
+
+.canvas {
+    background: #dfefff;
+    height: 100%;
+    width: 100%;
+    border-radius: 1em;
+    position: relative;
+}
+
+.draggable {
+    display: block;
+    height: 3em;
+    width: 3em;
+    background: red;
+}
+
+.draggable:hover {
+    box-sizing: border-box;
+    border: solid 1px black;
+}
+
+#object-1 {
+    left: 70px;
+    top: 100px;
+}
+
+#object-1:hover {
+    background: SeaGreen;
+}
+
+#object-2 {
+    right: 10px;
+    bottom: 20px;
+}
+
+#object-2:hover {
+    background: RoyalBlue;
+}
+
+#object-3 {
+    right: 1px;
+    bottom: 2px;
+}

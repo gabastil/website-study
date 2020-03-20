@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>D3 Force Study</title>
+    <link rel="stylesheet" type="text/css" href="./css/index.css">
+
+    <!-- jquery script import -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <!-- <script type="text/javascript" src="./js/jquery-3.4.1.js"></script> -->
+
+    <!-- d3 script import -->
+    <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- <script type="text/javascript" src="./js/d3.v5.min.js"></script> -->
+
+    <!-- custom script import -->
+    <script type="text/javascript" src="./js/index.js"></script>
+
+</head>
+<body>
+    <div id="container">
+        <div class='column'>
+            <div id="svg-container-1">
+                <h1>Simple Drag Functions</h1>
+                <p>Using only HTML, demonstrate drag and drop.</p>
+                <div id='canvas-1' class='canvas'>
+                    <div id='object-1'
+                         class='draggable'
+                         draggable='true'
+                         ondragstart='drag(this, event)'></div>
+                </div>
+            </div>
+        </div>
+        <div class='column'>
+            <div id="svg-container-2">
+                <h1>Drag and Drop</h1>
+                <p>Make objects draggable and then droppable into some zone.</p>
+                <div id='canvas-2' class='canvas'>
+                    <div id='object-1' class='draggable' draggable='true' ondragstart='drag(event)' ondrop='drop(event)'></div>
+                    <div id='object-2' class='draggable' draggable='true' ondragstart='drag(event)' ondrop='drop(event)'></div>
+                    <div id='object-3' class='draggable' draggable='true' ondragstart='drag(event)' ondrop='drop(event)'></div>
+                </div>
+            </div>
+        </div>
+        <div class='column'>
+            <div id="svg-container-3">
+                <h1>Drag and Drop with D3</h1>
+                <p>Using only D3</p>
+                <svg id='canvas-3' class='canvas'></svg>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
