@@ -63,17 +63,17 @@ svg {
     height: 100%;
     width: 100%;
     border-radius: 1em;
-    position: relative;
+    position: absolute;
 }
 
-.draggable {
+.object {
     display: block;
     height: 3em;
     width: 3em;
     background: red;
 }
 
-.draggable:hover {
+.object:hover {
     box-sizing: border-box;
     border: solid 1px black;
 }
@@ -99,4 +99,10 @@ svg {
 #object-3 {
     right: 1px;
     bottom: 2px;
+}
+
+#svg-container-1 span{
+    font-family: 'Courier New', 'Courier', serif;
+    background: #efefef;
+    font-size: 0.9em;
 }

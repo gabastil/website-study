@@ -6,14 +6,9 @@
  */
 
 $(document).ready(function(){
-    let $svg1 = $('svg[id="canvas-1"]'),
-        $svg2 = $('svg[id="canvas-2"]'),
-        $svg3 = $('svg[id="canvas-3"]');
-    let svg1 = d3.select('svg[id="canvas-1"]'),
-        svg2 = d3.select('svg[id="canvas-2"]'),
-        svg3 = d3.select('svg[id="canvas-3"]');
+    // study_1.dragElement();
+    let start = {x:0, y:0}, end = {x:0, y:0};
 
-    let height = $svg1.height(), width = $svg1.width();
 
 });
 
@@ -27,31 +22,44 @@ function randint(min=5, max=10){
     return Math.max(min, Math.floor(random));
 }
 
+function dragstart(event){}
+function drag(event){}
+function dragend(event){}
 
-function drag(element, e){
-    e.preventDefault();
-    let canvas = $("div[id='canvas-1']"),
-        canvas_x = canvas.position().left,
-        canvas_y = canvas.position().top;
-    let x = e.clientX,
-        y = e.clientY;
+// Object for Study 1 : Simple Drag Functions
+// const study_1 = {
+//     start : {x : 0, y : 0},
+//     end : {x : 0, y : 0},
+//     obj : '#object-1',
 
-    // console.log(element.style);
-    console.log(element.style['top']);
-    console.log(element.style['left']);
-    console.log(`x ${x} and y ${y}`);
-    console.log(`Canvas-X ${canvas_x} and canvas-y ${canvas_y}`);
-    console.log(`x - canvas-X ${x - canvas_x} and y - canvas-y ${y - canvas_y}`);
+//     dragElement : function(element){
+//         $(document).mousedown(this.dragstart);
+//         $(document).mouseup(this.dragend);
+//     },
 
-    element.style.left = `${x}px`;
-    element.style.top = `${y}px`;
+//     dragstart : function(event){
+//         event.preventDefault();
+//         study_1.start.x = event.clientX;
+//         study_1.start.y = event.clientY;
+//         $(document).mouseup(study_1.dragend);
+//         $(document).mousemove(study_1.drag);
+//     },
 
-    // Calculate new cursor position
-    // $(element).css("top", y).css("left", x);
-}
+//     drag : function(event){
+//         event.preventDefault();
+//         study_1.end.x = study_1.start.x - event.clientX;
+//         study_1.end.y = study_1.start.y - event.clientY;
+//         study_1.start.x = event.clientX;
+//         study_1.start.y = event.clientY;
 
-function drop(e){
-    // console.log(e.pageX);
-    // console.log($(this).attr('top'));
-    // $(this).css('top', `${e.pageY}px`).css('left', `${e.pageX}px`);
-}
+//         console.log(study_1.end);
+//         $(study_1.obj).attr('top', $(study_1.obj).offset().top - study_1.end.y);
+//         $(study_1.obj).attr('left', $(study_1.obj).offset().left - study_1.end.x);
+
+//     },
+
+//     dragend : function(event){
+//         $(document).mouseup(null);
+//         $(document).mousemove(null);
+//     },
+// }
