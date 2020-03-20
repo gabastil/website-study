@@ -15,18 +15,6 @@ $(document).ready(function(){
 
     let height = $svg1.height(), width = $svg1.width();
     let nodes1 = d3.range(0, 10).map(function(d){return {id : d, r : Math.max(3, Math.random() * 20)}});
-    let nodes2 = d3.range(0, 10).map(function(d){return {id : d, r : Math.max(3, Math.random() * 10)}});
-    let links = [
-                 {source:0, target:1},
-                 {source:0, target:2},
-                 {source:0, target:3},
-                 {source:0, target:4},
-                 {source:2, target:5},
-                 {source:2, target:6},
-                 {source:6, target:7},
-                 {source:7, target:8},
-                 {source:7, target:9},
-                ]
 
     // This is the main D3 Force Simulation initialization step.
     let sim = d3.forceSimulation(nodes1)
@@ -51,31 +39,34 @@ $(document).ready(function(){
 
 
     // Study 2 : Creating links between nodes
+    let nodes2 = d3.range(0, 10).map(function(d){return {id : d, r : Math.max(3, Math.random() * 10)}});
+    let links2 = d3.range(0, 10).map(function(d){return {source : Math.floor(Math.random() * 10),
+                                                        target : Math.floor(Math.random() * 10)}});
     sim = d3.forceSimulation(nodes2)
-                .force('charge', d3.forceManyBody().strength(-40))
+                .force('charge', d3.forceManyBody().strength(-10))
                 .force('center', d3.forceCenter(width / 2, height / 2))
-            .force('link', d3.forceLink().links(links).distance(20))
+            .force('link', d3.forceLink().links(links2).distance(15))
             .on('tick', ticked_2);
 
     function ticked_2(){
+        update_links(svg2, links2);
+
         let v = svg2.selectAll("text").data(nodes2);
 
         v.enter()
          .append('text')
          .text(function(d) { return d.id })
          .merge(v)
-         // .attr('r', function(d) { return d.r })
          .attr('id', function(d) { return d.id })
          .attr('x', function(d) { return d.x})
          .attr('y', function(d) { return d.y});
 
         v.exit().remove();
 
-        update_links();
     }
 
-    function update_links(){
-        var k = d3.select('.links').selectAll('line').data(links);
+    function update_links(selection, data){
+        var k = selection.selectAll('line').data(data);
 
         k.enter()
          .append('line')
@@ -88,5 +79,39 @@ $(document).ready(function(){
         k.exit().remove();
     }
 
+    // Study 3 : Creating draggable links connected with lines
+    let nodes3 = d3.range(0, 13).map(function(d){return {id : d, r : Math.max(5, Math.random() * 10)}});
+    let links3 = d3.range(0, 13).map(function(d){return {source : Math.floor(Math.random() * 10),
+                                                        target : Math.floor(Math.random() * 10)}});
+
+    sim = d3.forceSimulation(nodes3);
+    sim.force('charge', d3.forceManyBody().strength(-20));
+    sim.force('center', d3.forceCenter(width / 2, height / 2));
+    sim.force('link', d3.forceLink(links3).distance(31));
+    sim.on('tick', ticked_3);
+
+    function ticked_3(){
+        update_links(svg3, links3);
+
+        let p = svg3.selectAll("circle").data(nodes3);
+        let colors = ['red', 'yellow', 'blue', 'green'];
+
+        p.enter()
+         .append('circle')
+         .attr('r', function(d) {return d.r})
+         .attr('id', function(d) {return d.id})
+         .attr('class', 'step-3')
+         .merge(p)
+         .attr('cx', function(d) {return d.x})
+         .attr('cy', function(d) {return d.y})
+         .attr('fill', function(d) {return colors[+d.id % 4]});
+
+        p.exit().remove();
+    }
+
+    // Study 4 : Draggable
+    let drag = d3.drag().on('start', dragstart).on('drag', dragged).on('end', dragend);
+
+    // Implement drag
 
 });

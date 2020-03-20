@@ -44,6 +44,11 @@ svg text {
     user-select: none;
 }
 
+svg line {
+    stroke: #bbb;
+    stroke-width: 2px;
+}
+
 #container {
     display: flex;
     flex-direction: row;
@@ -55,4 +60,14 @@ svg text {
 {
     stroke-width: 5px;
     stroke: #000;
+}
+
+.step-3
+{
+    stroke: black;
+}
+
+.step-3:hover
+{
+    stroke-width: 5px;
 }
