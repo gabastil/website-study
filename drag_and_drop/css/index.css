@@ -32,7 +32,7 @@ div {
 }
 
 svg {
-    background: #dfefff;
+    border: solid 1px black;
     display: block;
     height: 100%;
     width: 100%;
@@ -40,26 +40,10 @@ svg {
     border-radius: 1em;
 }
 
-svg text {
-    user-select: none;
-}
-
-svg text:hover {
-    fill: red;
-    font-size: 1.5em;
-    font-weight: 800;
-    transition: all 0.5s ease;
-}
-
-svg line {
-    stroke: #aaa;
-    stroke-width: 2px;
-    stroke-linecap: round;
-}
-
 #container {
     display: flex;
     flex-direction: row;
+    align-content: space-between;
     height: 100%;
     width: 100%;
 }
@@ -74,13 +58,45 @@ svg line {
     width: 30%;
 }
 
-#canvas-1 circle:hover {
-    fill: fuchsia;
-    stroke: cornflowerblue;
-    transition: all 1s ease;
+.canvas {
+    background: #dfefff;
+    height: 100%;
+    width: 100%;
+    border-radius: 1em;
+    position: relative;
 }
 
-#canvas-3 circle:hover {
-    stroke: black;
-    stroke-width: 1px;
+.draggable {
+    display: block;
+    height: 3em;
+    width: 3em;
+    background: red;
+}
+
+.draggable:hover {
+    box-sizing: border-box;
+    border: solid 1px black;
+}
+
+#object-1 {
+    left: 70px;
+    top: 100px;
+}
+
+#object-1:hover {
+    background: SeaGreen;
+}
+
+#object-2 {
+    right: 10px;
+    bottom: 20px;
+}
+
+#object-2:hover {
+    background: RoyalBlue;
+}
+
+#object-3 {
+    right: 1px;
+    bottom: 2px;
 }
