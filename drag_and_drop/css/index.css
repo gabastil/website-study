@@ -21,7 +21,8 @@ h1 {
 }
 
 p {
-    text-overflow: wrap;
+    height: 3em;
+    text-align: justify;
 }
 
 div {
@@ -55,7 +56,7 @@ svg {
 }
 
 .column {
-    width: 30%;
+    width: 22.5%;
 }
 
 .canvas {
@@ -64,6 +65,7 @@ svg {
     width: 100%;
     border-radius: 1em;
     position: absolute;
+    margin: auto;
 }
 
 .object {
@@ -71,11 +73,29 @@ svg {
     height: 3em;
     width: 3em;
     background: red;
+    position: absolute;
 }
 
 .object:hover {
     box-sizing: border-box;
     border: solid 1px black;
+}
+
+.zone {
+    height: 5em;
+    width: 5em;
+    /* background: pink; */
+    border: solid 2px darkgoldenrod;
+    margin-bottom: 1em;
+    top: 50%;
+    transform: translateY(-150%);
+}
+
+.zone #object-1 {
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+
 }
 
 #object-1 {

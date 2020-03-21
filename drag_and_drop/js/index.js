@@ -6,9 +6,100 @@
  */
 
 $(document).ready(function(){
-    // study_1.dragElement();
-    let start = {x:0, y:0}, end = {x:0, y:0};
+    var dragged, prev = {x:0,y:0}, curr = {x:0,y:0};
+    // Make all objects draggable
+    $('.object').attr('draggable', true);
 
+    // Study 1: Dragging Shapes
+    function study1_dragstart(e){
+        dragged = e.target;
+        dragged.style.border = 'solid 2px black';
+        dragged.style.opacity = 0.5;
+        curr.x = e.pageX, curr.y = e.pageY;
+
+        // let img = new Image();
+        // img.src = null;
+        // e.dataTransfer.setDragImage(img, 0, 0);
+    }
+
+    function study1_dragover(e){
+        let target = e.target;
+
+        console.log(target.style);
+        console.log(target.style.left);
+        console.log(target.style.top);
+
+        prev.x = curr.x - e.pageX;
+        prev.y = curr.y - e.pageY;
+        curr.x = e.pageX;
+        curr.y = e.pageY;
+
+        target.style.left =  target.offsetLeft - prev.x + "px";
+        target.style.top =  target.offsetTop - prev.y + "px";
+
+        console.log([prev, curr]);
+        console.log([e.pageX, e.pageY]);
+    }
+
+    function study1_dragend(e){
+        let canvas = $('#canvas-1');
+        let target = e.target;
+        let border_top = canvas.offset().top,
+            border_left = canvas.offset().left,
+            border_bottom = canvas.height() + border_top,
+            border_right = canvas.width() + border_left;
+        let offset_top = target.offsetTop - target.style.height,
+            offset_left = target.offsetLeft - target.style.width;
+
+
+        if (offset_left > border_right) {
+            target.style.left = +border_right - target.style.width + 'px';
+        }
+
+        if (offset_top > border_bottom) {
+            target.style.top = +border_bottom - target.style.width + 'px';
+        }
+
+        dragged.style.border = '';
+        dragged.style.opacity = '';
+
+    }
+
+    $('#canvas-1 #object-1').on('dragstart', study1_dragstart)
+                            .on('drag', study1_dragover)
+                            .on('dragend', study1_dragend);
+
+    // Study 2 : Drag and Drop Zones
+    $('.zone .object').attr('draggable', true);
+
+    function study2_dragstart(e){
+        console.log(e.dataTransfer);
+        // e.dataTransfer.setData('text/plain', null);
+        dragged = e.target;
+    }
+
+    function study2_dragover(e){
+        e.preventDefault();
+        curr.x = prev.x - e.pageX;
+        curr.y = prev.y - e.pageY;
+        prev.x = e.pageX;
+        prev.y = e.pageY;
+        this.style.left = this.style.offsetX - prev.x;
+        this.style.top = this.style.offsetY - prev.y;
+    }
+    function study2_dragend(e){
+        e.preventDefault();
+
+        if (e.target.className === 'zone') {
+            e.target.style.background = 'pink';
+            dragged.parseNode.removeChild(dragged);
+            e.target.appendChild(dragged);
+        }
+    }
+
+    $('#canvas-2 #object-1').on('dragstart', study2_dragstart)
+                            .on('drag', study2_dragover)
+                            .on('dragend', study2_dragend);
 
 });
 

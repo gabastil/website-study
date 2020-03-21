@@ -20,21 +20,22 @@
     <div id="container">
         <div class='column'>
             <div id="svg-container-1">
-                <h1>Simple Drag Functions</h1>
-                <p>Using only HTML, demonstrate drag and drop using <span>mousedown</span>, <span>mousemove</span>, and <span>mouseup</span> events.</p>
+                <h1>Study 1 : Dragging Objects</h1>
+                <p>Using only HTML, demonstrate drag and drop using <span>drag</span> and/or <span>mouse</span> events.</p>
                 <div id='canvas-1' class='canvas'>
-                    <div id='object-1' class='object' draggable='true'></div>
+                    <div id='object-1' class='object'></div>
                 </div>
             </div>
         </div>
         <div class='column'>
             <div id="svg-container-2">
-                <h1>Drag and Drop</h1>
-                <p>Make objects draggable and then droppable into some zone.</p>
+                <h1>Study 2 : Drag and Drop Zones</h1>
+                <p>Make objects draggable and then droppable into zones.</p>
                 <div id='canvas-2' class='canvas'>
-                    <div id='object-1' class='object' draggable='true'></div>
-                    <div id='object-2' class='object' draggable='true'></div>
-                    <div id='object-3' class='object' draggable='true'></div>
+                    <div id='zone-1' class='zone'>
+                        <div id='object-1' class='object'></div>
+                    </div>
+                    <div id='zone-2' class='zone'></div>
                 </div>
             </div>
         </div>
@@ -42,7 +43,18 @@
             <div id="svg-container-3">
                 <h1>Drag and Drop with D3</h1>
                 <p>Using only D3</p>
-                <svg id='canvas-3' class='canvas'></svg>
+                <svg id='canvas-3' class='canvas'>
+                    <div id='object-1' class='object'></div>
+                    <div id='object-2' class='object'></div>
+                    <div id='object-3' class='object'></div>
+                </svg>
+            </div>
+        </div>
+        <div class='column'>
+            <div id="svg-container-4">
+                <h1>Drag and Drop with D3</h1>
+                <p>Using only D3</p>
+                <svg id='canvas-4' class='canvas'></svg>
             </div>
         </div>
     </div>
