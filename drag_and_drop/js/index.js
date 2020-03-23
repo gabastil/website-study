@@ -6,9 +6,11 @@
  */
 
 $(document).ready(function(){
-    var dragged, prev = {x:0,y:0}, curr = {x:0,y:0};
-    // Make all objects draggable
+    var dragged,
+        prev = {x:0,y:0}, curr = {x:0,y:0};
     $('.object').attr('draggable', true);
+    $('.zone .object').attr('draggable', true);
+    $('.canvas .object').attr('draggable', true);
 
     // Study 1: Dragging Shapes
     function study1_dragstart(e){
@@ -16,18 +18,11 @@ $(document).ready(function(){
         dragged.style.border = 'solid 2px black';
         dragged.style.opacity = 0.5;
         curr.x = e.pageX, curr.y = e.pageY;
-
-        // let img = new Image();
-        // img.src = null;
-        // e.dataTransfer.setDragImage(img, 0, 0);
     }
 
     function study1_dragover(e){
+        e.preventDefault();
         let target = e.target;
-
-        console.log(target.style);
-        console.log(target.style.left);
-        console.log(target.style.top);
 
         prev.x = curr.x - e.pageX;
         prev.y = curr.y - e.pageY;
@@ -36,12 +31,10 @@ $(document).ready(function(){
 
         target.style.left =  target.offsetLeft - prev.x + "px";
         target.style.top =  target.offsetTop - prev.y + "px";
-
-        console.log([prev, curr]);
-        console.log([e.pageX, e.pageY]);
     }
 
     function study1_dragend(e){
+        e.preventDefault();
         let canvas = $('#canvas-1');
         let target = e.target;
         let border_top = canvas.offset().top,
@@ -66,41 +59,61 @@ $(document).ready(function(){
     }
 
     $('#canvas-1 #object-1').on('dragstart', study1_dragstart)
-                            .on('drag', study1_dragover)
+                            .on('dragover', study1_dragover)
                             .on('dragend', study1_dragend);
 
     // Study 2 : Drag and Drop Zones
-    $('.zone .object').attr('draggable', true);
+    var dragged2;
 
     function study2_dragstart(e){
-        console.log(e.dataTransfer);
-        // e.dataTransfer.setData('text/plain', null);
-        dragged = e.target;
+        dragged2 = e.target;
+        dragged2.style.background = 'blue';
     }
 
     function study2_dragover(e){
         e.preventDefault();
-        curr.x = prev.x - e.pageX;
-        curr.y = prev.y - e.pageY;
-        prev.x = e.pageX;
-        prev.y = e.pageY;
-        this.style.left = this.style.offsetX - prev.x;
-        this.style.top = this.style.offsetY - prev.y;
     }
-    function study2_dragend(e){
+
+    function study2_drop(e){
         e.preventDefault();
-
-        if (e.target.className === 'zone') {
-            e.target.style.background = 'pink';
-            dragged.parseNode.removeChild(dragged);
-            e.target.appendChild(dragged);
-        }
+        dragged2.style.background = 'SeaGreen';
+        e.target.appendChild(dragged2);
     }
 
-    $('#canvas-2 #object-1').on('dragstart', study2_dragstart)
-                            .on('drag', study2_dragover)
-                            .on('dragend', study2_dragend);
+    $('.zone #object-1').on('dragstart', study2_dragstart);
+    $('#canvas-2 .zone').on('dragover', study2_dragover)
+                          .on('drop', study2_drop);
 
+
+    // Study 3 : Drag and Drop with D3
+    var dragged3, object = $('#canvas-3 .object');
+
+    function study3_mousedown(e){
+        curr.x = e.pageX, curr.y = e.pageY;
+        object.on('mousemove', study3_mousemove)
+              .on('mouseup', study3_mouseup);
+    }
+
+    function study3_mousemove(e){
+
+        prev.x = curr.x - e.pageX;
+        prev.y = curr.y - e.pageY;
+        curr.x = e.pageX;
+        curr.y = e.pageY;
+
+        object.attr('x', object.offset().left - prev.x + 'px');
+        object.attr('y', object.offset().top - prev.y + 'px');
+
+        console.log([object.attr('x'), object.attr('y')]);
+
+        object.on('mouseup', study3_mouseup);
+    }
+    function study3_mouseup(e){
+        object.on('mousemove', null);
+    }
+
+    object.on('click', function(e){console.log(e)});
+    object.on('mousedown', study3_mousedown);
 });
 
 /**
@@ -112,45 +125,3 @@ function randint(min=5, max=10){
     let random = Math.random() * max;
     return Math.max(min, Math.floor(random));
 }
-
-function dragstart(event){}
-function drag(event){}
-function dragend(event){}
-
-// Object for Study 1 : Simple Drag Functions
-// const study_1 = {
-//     start : {x : 0, y : 0},
-//     end : {x : 0, y : 0},
-//     obj : '#object-1',
-
-//     dragElement : function(element){
-//         $(document).mousedown(this.dragstart);
-//         $(document).mouseup(this.dragend);
-//     },
-
-//     dragstart : function(event){
-//         event.preventDefault();
-//         study_1.start.x = event.clientX;
-//         study_1.start.y = event.clientY;
-//         $(document).mouseup(study_1.dragend);
-//         $(document).mousemove(study_1.drag);
-//     },
-
-//     drag : function(event){
-//         event.preventDefault();
-//         study_1.end.x = study_1.start.x - event.clientX;
-//         study_1.end.y = study_1.start.y - event.clientY;
-//         study_1.start.x = event.clientX;
-//         study_1.start.y = event.clientY;
-
-//         console.log(study_1.end);
-//         $(study_1.obj).attr('top', $(study_1.obj).offset().top - study_1.end.y);
-//         $(study_1.obj).attr('left', $(study_1.obj).offset().left - study_1.end.x);
-
-//     },
-
-//     dragend : function(event){
-//         $(document).mouseup(null);
-//         $(document).mousemove(null);
-//     },
-// }

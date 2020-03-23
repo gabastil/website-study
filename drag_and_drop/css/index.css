@@ -73,6 +73,7 @@ svg {
     height: 3em;
     width: 3em;
     background: red;
+    fill: red;
     position: absolute;
 }
 
@@ -85,6 +86,7 @@ svg {
     height: 5em;
     width: 5em;
     /* background: pink; */
+    /* display: block; */
     border: solid 2px darkgoldenrod;
     margin-bottom: 1em;
     top: 50%;
@@ -93,9 +95,8 @@ svg {
 
 .zone #object-1 {
     top: 50%;
-    transform: translateY(-50%);
-    left: 0;
-
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #object-1 {
@@ -103,7 +104,7 @@ svg {
     top: 100px;
 }
 
-#object-1:hover {
+#object-1:hover, rect:hover {
     background: SeaGreen;
 }
 
