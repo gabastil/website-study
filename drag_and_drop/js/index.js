@@ -7,7 +7,9 @@
 
 $(document).ready(function(){
     var dragged,
-        prev = {x:0,y:0}, curr = {x:0,y:0};
+        prev = {x:0,y:0},
+        curr = {x:0,y:0};
+
     $('.object').attr('draggable', true);
     $('.zone .object').attr('draggable', true);
     $('.canvas .object').attr('draggable', true);
@@ -86,34 +88,39 @@ $(document).ready(function(){
 
 
     // Study 3 : Drag and Drop with D3
-    var dragged3, object = $('#canvas-3 .object');
+    var dragged3,
+        study3 = d3.select('#canvas-3'),
+        object = d3.selectAll('rect'),
+        drag = d3.drag();
 
-    function study3_mousedown(e){
-        curr.x = e.pageX, curr.y = e.pageY;
-        object.on('mousemove', study3_mousemove)
-              .on('mouseup', study3_mouseup);
+    var deltaX, deltaY;
+
+    function study3_dragstart(){
+        let current = d3.select(this);
+        // current.attr('fill', 'SeaGreen');
+        deltaX = parseInt(current.attr('x')) - d3.event.x;
+        deltaY = parseInt(current.attr('y')) - d3.event.y;
     }
 
-    function study3_mousemove(e){
-
-        prev.x = curr.x - e.pageX;
-        prev.y = curr.y - e.pageY;
-        curr.x = e.pageX;
-        curr.y = e.pageY;
-
-        object.attr('x', object.offset().left - prev.x + 'px');
-        object.attr('y', object.offset().top - prev.y + 'px');
-
-        console.log([object.attr('x'), object.attr('y')]);
-
-        object.on('mouseup', study3_mouseup);
-    }
-    function study3_mouseup(e){
-        object.on('mousemove', null);
+    function study3_dragover(){
+        let current = d3.select(this);
+        current.attr('x', d3.event.x + deltaX + 'px')
+               .attr('y', d3.event.y + deltaY + 'px')
+               .style('fill', 'SeaGreen');
     }
 
-    object.on('click', function(e){console.log(e)});
-    object.on('mousedown', study3_mousedown);
+    function study3_dragend(){
+        let current = d3.select(this);
+        current.style('fill', 'red');
+        console.log('end');
+        // Run some anti-collision algorithm (?)
+    }
+
+    drag.on('start', study3_dragstart)
+        .on('drag', study3_dragover)
+        .on('end', study3_dragend);
+    drag(object);
+
 });
 
 /**
