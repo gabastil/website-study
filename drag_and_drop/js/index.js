@@ -59,10 +59,20 @@ $(document).ready(function(){
         dragged.style.opacity = '';
 
     }
+    let object1 = $('#canvas-1 #object-1'),
+        canvas1 = $('#canvas-1'),
+        top = parseInt(canvas1.position().top),
+        left = parseInt(canvas1.position().left + object1.width()),
+        bottom = parseInt(canvas1.height() - object1.height()),
+        right = parseInt(canvas1.width() - object1.width());
 
-    $('#canvas-1 #object-1').on('dragstart', study1_dragstart)
-                            .on('dragover', study1_dragover)
-                            .on('dragend', study1_dragend);
+    // Randomly place the square object
+    object1.css('top', randint(top, bottom))
+           .css('left', randint(left, right));
+
+    object1.on('dragstart', study1_dragstart)
+           .on('dragover', study1_dragover)
+           .on('dragend', study1_dragend);
 
     // Study 2 : Drag and Drop Zones
     var dragged2;
@@ -88,16 +98,15 @@ $(document).ready(function(){
 
 
     // Study 3 : Drag and Drop with D3
-    var dragged3,
-        study3 = d3.select('#canvas-3'),
-        object = d3.selectAll('rect'),
+    var study3 = d3.select('#canvas-3'),
+        object = d3.selectAll('#canvas-3 rect'),
         drag = d3.drag();
 
     var deltaX, deltaY;
 
     function study3_dragstart(){
         let current = d3.select(this);
-        // current.attr('fill', 'SeaGreen');
+        current.raise();
         deltaX = parseInt(current.attr('x')) - d3.event.x;
         deltaY = parseInt(current.attr('y')) - d3.event.y;
     }
@@ -112,14 +121,89 @@ $(document).ready(function(){
     function study3_dragend(){
         let current = d3.select(this);
         current.style('fill', 'red');
-        console.log('end');
-        // Run some anti-collision algorithm (?)
     }
 
     drag.on('start', study3_dragstart)
         .on('drag', study3_dragover)
         .on('end', study3_dragend);
     drag(object);
+
+
+    // Study 4 : Drag with D3 and update positions per d3.force
+    var study4 = d3.select('#canvas-4'),
+        drag4 = d3.drag();
+
+    var deltaX, deltaY;
+
+    function study4_dragstart(){
+        let current = d3.select(this);
+        current.raise();
+        deltaX = parseInt(current.attr('x')) - d3.event.x;
+        deltaY = parseInt(current.attr('y')) - d3.event.y;
+    }
+
+    function study4_dragover(){
+        let current = d3.select(this);
+        current.attr('x', d3.event.x + deltaX + 'px')
+               .attr('y', d3.event.y + deltaY + 'px')
+               .style('fill', 'SeaGreen');
+
+        let idx = $(this).attr('id') - 1;
+
+        study4data[idx].x = d3.event.x + deltaX;
+        study4data[idx].y = d3.event.y + deltaY;
+    }
+
+    function study4_dragend(){
+        let current = d3.select(this);
+        current.style('fill', 'red');
+        console.log('end');
+
+        let simulation = d3.forceSimulation(study4data)
+                           .force('charge', d3.forceManyBody().strength(-5))
+                           .force('collide', d3.forceCollide(12))
+                           .on('tick', function(){tick(study4, study4data)});
+
+        function tick(selection, data){
+            let u = selection.selectAll('rect').data(data);
+
+            u.enter()
+             .append('rect')
+             .merge(u)
+             .attr('id', function(d){return d.id})
+             .attr('fill', 'cornflowerblue')
+             .attr('x', function(d){return d.x})
+             .attr('y', function(d){return d.y})
+
+            // u.transition().duration(1000).attr('fill', 'red');
+
+            u.exit().remove();
+        }
+    }
+
+    let study4data = [
+                        {id : 1, x : randint(left, right), y : randint(top, bottom)},
+                        {id : 2, x : randint(left, right), y : randint(top, bottom)},
+                        {id : 3, x : randint(left, right), y : randint(top, bottom)},
+                        {id : 4, x : randint(left, right), y : randint(top, bottom)},
+                     ];
+
+    study4.selectAll('rect')
+          .data(study4data)
+          .enter()
+          .append('rect')
+          .attr('id', function(d){return d.id})
+          .attr('x', function(d){return d.x})
+          .attr('y', function(d){return d.y})
+          .attr('class', 'object');
+
+    let object4 = d3.selectAll('#canvas-4 rect');
+
+    drag4.on('start', study4_dragstart)
+        .on('drag', study4_dragover)
+        .on('end', study4_dragend);
+
+    drag4(object4);
 
 });
 

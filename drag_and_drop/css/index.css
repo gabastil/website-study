@@ -47,6 +47,10 @@ svg {
     border-radius: 1em;
 }
 
+rect {
+    fill: red;
+}
+
 rect:hover {
     fill: pink;
     stroke: black;
@@ -113,10 +117,7 @@ rect:hover {
     transform: translate(-50%, -50%);
 }
 
-#object-1 {
-    left: 70px;
-    top: 100px;
-}
+#object-1 {}
 
 #object-1:hover, rect:hover {
     background: SeaGreen;
