@@ -9,6 +9,18 @@ $(document).ready(function(){
     // study_1.dragElement();
     let start = {x:0, y:0}, end = {x:0, y:0};
 
+    // Make all objects draggable
+    $('div[class="object"]').attr('draggable', true);
+
+    // Study 1 : Drag an object and have it stay with the new coordinates
+    // $(function(){$('#canvas-1 #object-1').draggable()});
+
+    $('#canvas-1 #object-1').on('dragstart', function(a,b,c){console.log([a,b,c])});
+                            // .attr('ondragover', study[1].dragover)
+                            // .attr('ondragend', study[1].dragend);
+
+
+
 
 });
 
@@ -22,9 +34,11 @@ function randint(min=5, max=10){
     return Math.max(min, Math.floor(random));
 }
 
-function dragstart(event){}
-function drag(event){}
-function dragend(event){}
+function study1_dragstart(event){
+    console.log(event);
+}
+function study1_drag(event){}
+function study1_dragend(event){}
 
 // Object for Study 1 : Simple Drag Functions
 // const study_1 = {

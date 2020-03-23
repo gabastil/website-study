@@ -22,6 +22,8 @@ h1 {
 
 p {
     text-overflow: wrap;
+    height: 3em;
+    text-align: justify;
 }
 
 div {
@@ -55,7 +57,7 @@ svg {
 }
 
 .column {
-    width: 30%;
+    width: 20%;
 }
 
 .canvas {
@@ -71,6 +73,7 @@ svg {
     height: 3em;
     width: 3em;
     background: red;
+    border-radius: 0.5em;
 }
 
 .object:hover {
@@ -105,4 +108,24 @@ svg {
     font-family: 'Courier New', 'Courier', serif;
     background: #efefef;
     font-size: 0.9em;
+}
+
+#canvas-2 .zone {
+    border: solid 1px darkgreen;
+    background: pink;
+    height: 5em;
+    width: 5em;
+    margin: 1em auto;
+    display: block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-100%);
+}
+
+#canvas-2 .zone #object-1 {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    margin: auto;
 }
