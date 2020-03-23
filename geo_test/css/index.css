@@ -1,0 +1,158 @@
+/**
+ * filename : index.css
+ * author : glenn abastillas
+ * created : march 19, 2020
+ * description : d3_force.css contains style definitions for the d3_force study
+ * index.html page.
+ */
+
+html, body {
+    font-family: "Helvetica", "Arial", sans-serif;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+h1 {
+    font-size: 1em;
+}
+
+p {
+    height: 3em;
+    text-align: center;
+}
+
+div {
+    display: block;
+    position: relative;
+    height: 66%;
+    margin: auto;
+}
+
+span{
+    font-family: 'Courier New', 'Courier', serif;
+    background: #efefef;
+    font-size: 0.9em;
+}
+
+svg {
+    border: solid 1px black;
+    display: block;
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    border-radius: 1em;
+}
+
+rect {
+    fill: red;
+}
+
+rect:hover {
+    fill: pink;
+    stroke: black;
+    stroke-width: 2px;
+}
+
+#container {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    height: 100%;
+    width: 100%;
+}
+
+.links
+{
+    stroke-width: 5px;
+    stroke: #000;
+}
+
+.column {
+    width: 22.5%;
+}
+
+.canvas {
+    background: #dfefff;
+    height: 100%;
+    width: 100%;
+    border-radius: 1em;
+    position: absolute;
+    margin: auto;
+    overflow: hidden;
+    border: solid 1px #888;
+}
+
+.object {
+    display: block;
+    height: 3em;
+    width: 3em;
+    background: red;
+    fill: red;
+    position: absolute;
+}
+
+.object:hover {
+    box-sizing: border-box;
+    border: solid 1px black;
+}
+
+.zone {
+    height: 5em;
+    width: 5em;
+    /* background: pink; */
+    /* display: block; */
+    border: solid 2px darkgoldenrod;
+    margin-bottom: 1em;
+    top: 50%;
+    transform: translateY(-150%);
+}
+
+.zone #object-1 {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#object-1 {}
+
+#object-1:hover, rect:hover {
+    background: SeaGreen;
+}
+
+#object-2 {
+    right: 10px;
+    bottom: 20px;
+}
+
+#object-2:hover {
+    background: RoyalBlue;
+}
+
+#object-3 {
+    right: 1px;
+    bottom: 2px;
+}
+
+#canvas-2 .zone {
+    border: solid 1px darkgreen;
+    background: pink;
+    height: 5em;
+    width: 5em;
+    margin: 1em auto;
+    display: block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-100%);
+}
+
+#canvas-2 .zone #object-1 {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    margin: auto;
+}
