@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multiple Tabs Study</title>
+    <link rel="stylesheet" type="text/css" href="./css/index.css">
+</head>
+<body>
+    <div class='panel'>
+        <div class='tabs'>
+            <ul class='tabs'>
+                <li class='tab' rel='item1'>Fespest</li>
+                <li class='tab' rel='item2'>Sacumth</li>
+                <li class='tab' rel='item3'>Tespth</li>
+            </ul>
+        </div>
+        <div class='display'>
+            <ul>
+                <li rel='item1'>Webal unimt valan t'mnira niyo t'wupr fup ma sif valan unimt mut to mnira val bnipt?</li>
+                <li rel='item1'>Uyara canim valan sai t'tranisanpa?</li>
+                <li rel='item1'>Valan nipa t'aist enmnim sim t'wupyth.</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script type="text/javascript">
+    $(document).ready( function() {
+        var $display = $('.display');
+        let $tab = $('.tab');
+
+        $tab.on('click', function(){
+            let rel = $(this).attr('rel');
+
+            if ($display.hasClass('active')){
+                $display.removeClass('active');
+            } else {
+                $display.addClass('active');
+            }
+        });
+
+        $display.on('hover', function(){
+            alert('done');
+        });
+    })
+</script>
+</html>
