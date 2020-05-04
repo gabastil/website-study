@@ -14,10 +14,20 @@
             </ul>
         </div>
         <div class='display'>
-            <ul>
+            <ul id='item1'>
                 <li rel='item1'>Webal unimt valan t'mnira niyo t'wupr fup ma sif valan unimt mut to mnira val bnipt?</li>
-                <li rel='item1'>Uyara canim valan sai t'tranisanpa?</li>
-                <li rel='item1'>Valan nipa t'aist enmnim sim t'wupyth.</li>
+                <li rel='item2'>Uyara canim valan sai t'tranisanpa?</li>
+                <li rel='item3'>Valan nipa t'aist enmnim sim t'wupyth.</li>
+            </ul>
+            <ul id='item2'>
+                <li rel='item1'>abcd</li>
+                <li rel='item2'>abcd</li>
+                <li rel='item3'>abcd</li>
+            </ul>
+            <ul id='item3'>
+                <li rel='item1'>1235abcd</li>
+                <li rel='item2'>1235abcd</li>
+                <li rel='item3'>1235abcd</li>
             </ul>
         </div>
     </div>
@@ -31,11 +41,21 @@
 
         $tab.on('click', function(){
             let rel = $(this).attr('rel');
+            let $other_tabs = $('li[rel!=' + rel + ']');
+            let $curr_display = $("#" + rel);
+            let $other_display = $(`ul[id!='${rel}'][id^='item']`);
+
+            console.log($curr_display);
+            console.log($other_display);
 
             if ($display.hasClass('active')){
                 $display.removeClass('active');
+                $curr_display.attr("visibility", "hidden");
+                $other_display.attr("visibility", "show");
             } else {
                 $display.addClass('active');
+                $curr_display.attr("visibility", "show");
+                $other_display.attr("visibility", "hidden");
             }
         });
 
