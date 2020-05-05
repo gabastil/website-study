@@ -2,7 +2,68 @@
 <html>
 <head>
     <title>Multiple Tabs Study</title>
-    <link rel="stylesheet" type="text/css" href="./css/index.css">
+    <!-- <link rel="stylesheet" type="text/css" href="./css/index.css"> -->
+    <style>
+        html, body {
+            font-family: "Helvetica", sans-serif;
+            margin: 0
+        }
+
+        ul {
+            margin: 0;
+        }
+
+        .panel {
+            display: block;
+            position: relative;
+            margin: auto;
+            height: 10em;
+            width: 50em;
+        }
+
+        .tabs {
+            display: flex;
+            flex-direction: row;
+            list-style-type: none;
+            text-align: center;
+            margin-top: 0.2em;
+        }
+
+        .tab {
+            border-radius: 0.5em 0.5em 0 0;
+            background: gray;
+            color: white;
+            margin-top: 0;
+            margin-right: 0.1em;
+            width: 10em;
+            height: 1em;
+        }
+
+        .tab:hover {
+            background: lightblue;
+        }
+
+        .tab.active {
+            background: lightgray;
+            color: black;
+        }
+
+        .display {
+            border-radius: 0.5em;
+            background: gray;
+            height: 10em;
+            top: 1.2em;
+            width: 100%;
+            position: absolute;
+            padding: 1em;
+            visibility: hidden;
+        }
+
+        .display.active {
+            background: lightgray;
+            visibility: visible;
+        }
+    </style>
 </head>
 <body>
     <div class='panel'>
@@ -13,31 +74,49 @@
                 <li class='tab' rel='item3'>Tespth</li>
             </ul>
         </div>
-        <div class='display-1'></div>
-        <div class='display-2'></div>
-        <div class='display-3'></div>
     </div>
 
 </body>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script type="text/javascript">
     $(document).ready( function() {
+        insertPanels(4);
+
         var $display = $('.display');
         let $tab = $('.tab');
 
         $tab.on('click', function(){
-            let rel = $(this).attr('rel');
+            let panel_n = 'panel-' + $(this).attr('rel').slice(-1);
+            let $current_tab = $(this);
+            let $other_tabs = $(`li.tab[rel^='item'][rel!='${$current_tab.attr('rel')}']`);
+            let $current_panel = $(`div[rel='${panel_n}']`);
+            let $others = $(`div[rel^='panel'][rel!='${panel_n}']`);
 
-            if ($display.hasClass('active')){
-                $display.removeClass('active');
+
+            if ($current_panel.hasClass('active')){
+                $current_panel.hide(300, $current_panel.removeClass('active'));
+                $current_tab.removeClass('active');
             } else {
-                $display.addClass('active');
+                $current_tab.addClass('active');
+                $current_panel.show(300, $current_panel.addClass('active'));
             }
-        });
-
-        $display.on('hover', function(){
-            alert('done');
+            $other_tabs.removeClass('active')
+            $others.removeClass('active');
         });
     })
+
+    function insertPanels(n){
+        console.log('insertPanels');
+        let $body = $('div[class="panel"]'),
+            samples = ['<h1>Waycuma</h1>Tesis t\'fespest taet fup valan sim tapni.',
+                       '<h1>Yayu</h1>Sif valan canim panith tesis, tam pamamair ma.',
+                       '<h1>Avala</h1>Tesis sis t\'yenist syestha wa canim seuw.'],
+            section;
+
+        for (let i = 0; i < n; i++){
+            section = `<div class='display' rel='panel-${i}'>${samples[i-1]}</div>`;
+            $body.append(section);
+        }
+    }
 </script>
 </html>
