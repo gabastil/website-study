@@ -92,14 +92,17 @@
             let $current_panel = $(`div[rel='${panel_n}']`);
             let $others = $(`div[rel^='panel'][rel!='${panel_n}']`);
 
+            // $current_panel.slideToggle(200, function(a){console.log(a)});
+
 
             if ($current_panel.hasClass('active')){
-                $current_panel.hide(300, $current_panel.removeClass('active'));
                 $current_tab.removeClass('active');
+                $current_panel.slideUp(200, 'linear', $current_panel.removeClass('active'));
             } else {
                 $current_tab.addClass('active');
-                $current_panel.show(300, $current_panel.addClass('active'));
+                $current_panel.slideDown(200, 'linear', $current_panel.addClass('active'));
             }
+
             $other_tabs.removeClass('active')
             $others.removeClass('active');
         });
