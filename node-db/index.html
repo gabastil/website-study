@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+</body>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.js">
+</script>
+<script type="text/javascript">
+    var mysql = require('mysql');
+    var host = "gabastil1.db.8756087.hostedresource.com",
+        username = "gabastil1",
+        password = "!";
+
+    var con = mysql.createConnection({
+        host : host,
+        username : username,
+        password : password
+    });
+
+    con.connect(function(err) {
+        if (err) throw err;
+        console.log("Connected");
+    })
+
+
+</script>
+</html>
