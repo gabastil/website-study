@@ -1,0 +1,43 @@
+html, body {
+	margin: 0;
+	font-family: "Helvetica", sans-serif;
+}
+
+.panel {
+	height: 5em;
+	margin: auto;
+	display: block;
+	top: 50%;
+	/* transform: translateY(-50%); */
+	background-color: lightpink;
+	font-size: 1.5em;
+	text-align: center;
+}
+
+.panel form{
+	top: 50%;
+	width: 50%;
+	margin: auto;
+	position: relative;
+}
+
+.panel label{
+	text-align: left;
+}
+
+.panel input{
+	height: 1.5em;
+	width: 10em;
+	font-size: 2em;
+	font-family: 'Roboto', 'Helvetica', sans-serif;
+	border: none;
+	border-radius: 0.25em;
+	padding: 0.25em;
+}
+
+.panel button {
+	font-size: 1.5em;
+	border-radius: 0.25em;
+	background: gray;
+	margin-top: 0.25em;
+}
