@@ -3,13 +3,18 @@ html, body {
 	font-family: "Helvetica", sans-serif;
 }
 
+a {
+	text-decoration: none;
+}
+
 .panel {
-	height: 5em;
+	height: auto;
 	margin: auto;
 	display: block;
 	top: 50%;
 	/* transform: translateY(-50%); */
-	background-color: lightpink;
+	background-color: salmon;
+	padding: 2em 0 2em 0;
 	font-size: 1.5em;
 	text-align: center;
 }
@@ -27,12 +32,17 @@ html, body {
 
 .panel input{
 	height: 1.5em;
-	width: 10em;
+	width: 3em;
 	font-size: 2em;
 	font-family: 'Roboto', 'Helvetica', sans-serif;
 	border: none;
 	border-radius: 0.25em;
 	padding: 0.25em;
+	background: lightpink;
+}
+
+.panel input:active {
+	border: none;
 }
 
 .panel button {
@@ -40,4 +50,28 @@ html, body {
 	border-radius: 0.25em;
 	background: gray;
 	margin-top: 0.25em;
+}
+
+.panel button:hover {
+	background-color: crimson;
+}
+
+.secondary-input {
+	height: 0.5em;
+	font-size: 0.5em;
+	visibility: hidden;
+	display: none;;
+}
+
+.display {
+	height: 100%;
+	bottom: 0;
+	display: flex;
+	background: lightskyblue;
+	flex-direction: column;
+}
+
+.article {
+	text-align: left;
+	padding: 0 1em 0 1em;
 }
